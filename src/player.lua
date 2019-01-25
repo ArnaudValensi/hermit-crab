@@ -2,6 +2,7 @@ function require_player()
     idle_sprite = 1
     gravity = 0.5
     jump_force = 5
+    fall_coef = 2
     player_height = 8
     map_cell_spr = 999
 
@@ -68,10 +69,12 @@ function require_player()
                         velocity.y = -jump_force
                     end
                 else
-                    velocity.y = velocity.y + gravity
-
                     if (velocity.y < 0 and jump_pressed_before and jump_pressed == false) then
                         velocity.y = 0
+                    elseif (velocity.y > 0) then -- Falling
+                        velocity.y = velocity.y + gravity * fall_coef
+                    else
+                        velocity.y = velocity.y + gravity
                     end
                 end
 
