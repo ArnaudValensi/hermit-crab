@@ -37,7 +37,7 @@ function require_player()
 end
 new_player = require_player()
 
--- globals
+-- Globals
 player = new_player()
 
 function _update()
