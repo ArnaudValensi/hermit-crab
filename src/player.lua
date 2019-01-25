@@ -21,6 +21,7 @@ function require_player()
                 end
 
                 velocity.y = velocity.y + gravity
+                pos_y = pos_y + velocity.y
             end,
             draw = function()
                 print('('..pos_x..', '..pos_y..')', 0, 0, 7)
