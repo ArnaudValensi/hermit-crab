@@ -7,28 +7,28 @@ const dedent = require('dedent');
 const CART_FILE = `${require('../package.json').name}.p8`;
 
 (async function main() {
-  function getGfx() {
-    let gfx = ['__gfx__'];
+  function getSection(name) {
+    let section = [name];
     const fileLines = fs
       .readFileSync("./hermit-carb.p8")
       .toString()
       .split('\n');
 
-    const gfxLine = fileLines.indexOf('__gfx__');
+    const sectionLine = fileLines.indexOf(name);
 
-    if (gfxLine === -1) {
-      return gfx[0];
+    if (sectionLine === -1) {
+      return section[0];
     }
 
-    for (let index = gfxLine + 1; index < fileLines.length; index++) {
+    for (let index = sectionLine + 1; index < fileLines.length; index++) {
       if (fileLines[index].startsWith('__')) {
         break;
       }
-      gfx.push(fileLines[index]);
+      section.push(fileLines[index]);
     }
 
-    return gfx.join('\n');
-  };
+    return section.join('\n');
+  }
 
   async function getFileList() {
     const sourceFiles = await glob('./src/**/*.lua');
@@ -73,13 +73,14 @@ const CART_FILE = `${require('../package.json').name}.p8`;
     version 16
     __lua__`;
 
-  const gfxData = getGfx();
+  const gfxData = getSection('__gfx__');
+  const gffData = getSection('__gff__');
   const sourceFiles = await getFileList();
 
   console.log(`${chalk.blue('Building the following files:')}\n ${chalk.green('./src/index.lua\n ' + sourceFiles.join('\n '))}`);
 
   const luaData = readLuaFiles(sourceFiles);
-  const buildData = `${header}\n${luaData}\n${gfxData}`;
+  const buildData = `${header}\n${luaData}\n${gfxData}\n${gffData}`;
 
   fs.writeFileSync(CART_FILE, buildData);
 
