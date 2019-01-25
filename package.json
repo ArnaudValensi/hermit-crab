@@ -1,0 +1,22 @@
+{
+  "name": "hermit-carb",
+  "version": "1.0.0",
+  "description": "",
+  "main": "watch.js",
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "chalk": "^2.4.2",
+    "dedent": "^0.7.0",
+    "glob-promise": "^3.4.0",
+    "log-timestamp": "^0.2.1",
+    "onchange": "^5.2.0"
+  },
+  "scripts": {
+    "dev": "yarn start && sleep 3 && yarn build:watch",
+    "start": "node ./bin/start.js",
+    "build": "node ./bin/build.js",
+    "build:watch": "onchange 'src/**/*.lua' -i -- yarn build"
+  },
+  "dependencies": {}
+}
