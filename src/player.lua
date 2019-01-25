@@ -1,6 +1,8 @@
 function require_player()
     idle_sprite = 1
-    gravity = 2
+    gravity = 0.5
+    player_height = 8
+    map_cell_spr = 999
 
     function new_player()
         pos_x = 0
@@ -20,11 +22,19 @@ function require_player()
                     pos_x = pos_x + 1
                 end
 
-                velocity.y = velocity.y + gravity
                 pos_y = pos_y + velocity.y
+
+                map_cell_spr = mget(pos_x / 8, (pos_y + 8) / 8);
+                is_grounded = fget(map_cell_spr, 7)
+
+                if (is_grounded) then
+                    velocity.y = 0
+                else
+                    velocity.y = velocity.y + gravity
+                end
             end,
             draw = function()
-                print('('..pos_x..', '..pos_y..')', 0, 0, 7)
+                print(map_cell_spr, 0, 0, 7)
                 spr(idle_sprite, pos_x, pos_y)
             end
         }
