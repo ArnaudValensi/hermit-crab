@@ -46,6 +46,8 @@ end
 
 function _draw()
   cls()
+  camera(0, 0)
+  map(0, 0, 0, 0, 16, 16)
   camera(cam_x, cam_y)
   player.draw()
 end
