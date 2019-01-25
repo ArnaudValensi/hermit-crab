@@ -1,43 +1,53 @@
 pico-8 cartridge // http://www.pico-8.com
 version 16
 __lua__
-function require_hello()
-    return function()
-        -- do something.
+function require_player()
+    idle_sprite = 1
+    gravity = 2
+
+    function new_player()
+        pos_x = 0
+        pos_y = 0
+        is_grounded = false
+        velocity = {
+            x = 0,
+            y = 0,
+        }
+
+        return {
+            update = function()
+                if (btn(0)) then
+                    pos_x = pos_x - 1
+                end
+                if (btn(1)) then
+                    pos_x = pos_x + 1
+                end
+
+                velocity.y = velocity.y + gravity
+            end,
+            draw = function()
+                print('('..pos_x..', '..pos_y..')', 0, 0, 7)
+                spr(idle_sprite, pos_x, pos_y)
+            end
+        }
     end
-end
-hello = require_hello()
 
--- globals
-cam_x = 0
-cam_y = 0
-
-function update_input()
-  if (btn(0) and cam_x > 0) then
-    cam_x = cam_x - 1
-  end
-  if (btn(1) and cam_x < 127) then
-    cam_x = cam_x + 1
-  end
-  if (btn(2) and cam_y > 0) then
-    cam_y = cam_y - 1
-  end
-  if (btn(3) and cam_y < 127) then
-    cam_y = cam_y + 1
-  end
+    return new_player
 end
+new_player = require_player()
+
+-- Globals
+player = new_player()
 
 function _update()
-  update_input()
+  player.update()
 end
 
 function _draw()
   cls()
   camera(cam_x, cam_y)
-  print('('..cam_x..', '..cam_y..')', cam_x, cam_y, 7)
+  player.draw()
 end
-
-hello()
 
 __gfx__
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000100000000000000808080000000000000000000000000

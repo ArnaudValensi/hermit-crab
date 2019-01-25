@@ -1,32 +1,14 @@
-hello = require_hello()
+new_player = require_player()
 
 -- Globals
-cam_x = 0
-cam_y = 0
-
-function update_input()
-  if (btn(0) and cam_x > 0) then
-    cam_x = cam_x - 1
-  end
-  if (btn(1) and cam_x < 127) then
-    cam_x = cam_x + 1
-  end
-  if (btn(2) and cam_y > 0) then
-    cam_y = cam_y - 1
-  end
-  if (btn(3) and cam_y < 127) then
-    cam_y = cam_y + 1
-  end
-end
+player = new_player()
 
 function _update()
-  update_input()
+  player.update()
 end
 
 function _draw()
   cls()
   camera(cam_x, cam_y)
-  print('('..cam_x..', '..cam_y..')', cam_x, cam_y, 7)
+  player.draw()
 end
-
-hello()
