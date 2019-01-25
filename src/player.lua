@@ -1,6 +1,7 @@
 function require_player()
     idle_sprite = 1
     gravity = 0.5
+    jump_force = 5
     player_height = 8
     map_cell_spr = 999
 
@@ -16,6 +17,7 @@ function require_player()
             x = 0,
             y = 0,
         }
+        jump_pressed_before = false
 
         collide_side = function()
             if velocity.x < 0 then
@@ -30,8 +32,8 @@ function require_player()
                     pos_x = flr(pos_x / 8) * 8
                     return true
                 end
+                return false
             end
-            return false
         end
 
         move_x = function()
@@ -53,6 +55,19 @@ function require_player()
         return {
             update = function()
                 move_x()
+
+                jump_pressed = btn(4)
+                if (jump_pressed and is_grounded == true) then -- Jump (z)
+                    velocity.y = -jump_force
+                end
+                if (velocity.y < 0 and jump_pressed_before and jump_pressed == false) then
+                    velocity.y = 0
+                end
+                if (jump_pressed) then
+                    jump_pressed_before = true
+                else
+                    jump_pressed_before = false
+                end
 
                 pos_y = pos_y + velocity.y
 
