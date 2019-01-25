@@ -4,6 +4,7 @@ __lua__
 function require_player()
     idle_sprite = 1
     gravity = 0.5
+    jump_force = 5
     player_height = 8
     map_cell_spr = 999
 
@@ -19,6 +20,7 @@ function require_player()
             x = 0,
             y = 0,
         }
+        jump_pressed_before = false
 
         collide_side = function()
             if velocity.x < 0 then
@@ -33,8 +35,8 @@ function require_player()
                     pos_x = flr(pos_x / 8) * 8
                     return true
                 end
+                return false
             end
-            return false
         end
 
         move_x = function()
@@ -57,16 +59,32 @@ function require_player()
             update = function()
                 move_x()
 
-                pos_y = pos_y + velocity.y
+                jump_pressed = btn(4)
 
                 map_cell_spr = mget(pos_x / 8, (pos_y + 8) / 8);
                 is_grounded = fget(map_cell_spr, 7)
 
                 if (is_grounded) then
                     velocity.y = 0
+
+                    if (jump_pressed) then -- Jump (z)
+                        velocity.y = -jump_force
+                    end
                 else
                     velocity.y = velocity.y + gravity
+
+                    if (velocity.y < 0 and jump_pressed_before and jump_pressed == false) then
+                        velocity.y = 0
+                    end
                 end
+
+                if (jump_pressed) then
+                    jump_pressed_before = true
+                else
+                    jump_pressed_before = false
+                end
+
+                pos_y = pos_y + velocity.y
             end,
             draw = function()
                 print(map_cell_spr, 0, 0, 7)
