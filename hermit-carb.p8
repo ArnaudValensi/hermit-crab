@@ -86,8 +86,12 @@ function require_player()
 
                 pos_y = pos_y + velocity.y
 
-                map_cell_spr = mget(pos_x / 8, (pos_y + 8) / 8);
-                is_grounded = fget(map_cell_spr, 7)
+                local left_feet_spr = mget(pos_x / 8, (pos_y + 8) / 8);
+                local right_feet_spr = mget((pos_x + 7) / 8, (pos_y + 8) / 8);
+                local collide_left = fget(left_feet_spr, 7)
+                local collide_right = fget(right_feet_spr, 7)
+
+                is_grounded = collide_left or collide_right
 
                 if (is_grounded) then -- Fix y position
                     pos_y = pos_y - pos_y % 8
