@@ -2,19 +2,30 @@ pico-8 cartridge // http://www.pico-8.com
 version 16
 __lua__
 function require_camera()
-    local half_screen_width = 64;
+    local half_screen = 64
+    local smooth_speed = 0.2
+    local vertical_offset = 24
+
+    local function lerp(a, b, t)
+        return a + (b - a) * t
+    end
 
     local function new_camera(player)
-        local offset_x = 0
-        local player_width = player.get_width()
+        local pos = new_vec(0, 0)
+        local offset = new_vec(0, 0)
 
         return {
             update = function()
-                local player_pos_x = player.get_pos_x()
-                offset_x = player_pos_x + 4 - half_screen_width
+                local player_center_pos = player.get_center_pos()
+
+                pos.x = lerp(pos.x, player_center_pos.x, smooth_speed)
+                pos.y = lerp(pos.y, player_center_pos.y, smooth_speed)
+
+                offset.x = pos.x - half_screen
+                offset.y = pos.y - half_screen - vertical_offset
             end,
             get_offset = function()
-                return offset_x
+                return offset.x, offset.y
             end
         }
     end
@@ -187,6 +198,9 @@ function require_player()
             get_pos_x = function()
                 return pos_x
             end,
+            get_center_pos = function()
+                return new_vec(pos_x + 4, pos_y + 4)
+            end,
             get_width = function()
                 return 8
             end
@@ -195,6 +209,13 @@ function require_player()
 
     return new_player
 end
+function new_vec(x, y)
+  return {
+    x = x,
+    y = y,
+  }
+end
+
 new_player = require_player()
 new_camera = require_camera()
 
@@ -213,7 +234,7 @@ end
 
 function _draw()
   cls()
-  camera(cam.get_offset(), 0)
+  camera(cam.get_offset())
   map(0, 0, 0, 0, 128, 128)
   player.draw()
 

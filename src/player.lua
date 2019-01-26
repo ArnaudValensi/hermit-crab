@@ -164,6 +164,9 @@ function require_player()
             get_pos_x = function()
                 return pos_x
             end,
+            get_center_pos = function()
+                return new_vec(pos_x + 4, pos_y + 4)
+            end,
             get_width = function()
                 return 8
             end

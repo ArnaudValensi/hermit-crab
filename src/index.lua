@@ -1,3 +1,10 @@
+function new_vec(x, y)
+  return {
+    x = x,
+    y = y,
+  }
+end
+
 new_player = require_player()
 new_camera = require_camera()
 
@@ -16,7 +23,7 @@ end
 
 function _draw()
   cls()
-  camera(cam.get_offset(), 0)
+  camera(cam.get_offset())
   map(0, 0, 0, 0, 128, 128)
   player.draw()
 
