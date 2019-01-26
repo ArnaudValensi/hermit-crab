@@ -38,6 +38,7 @@ function require_player()
     }
 
     function new_player()
+        local alive = true
         local pos_x = 2 * 8
         local pos_y = 10 * 8
         local animtick = 5
@@ -57,6 +58,7 @@ function require_player()
         local action_pressed_before = false
 
         local _change_state = function(new_state)
+            alive = true
             shell_state = shell_states[new_state]
             frames=shell_state.frames
             sprite_idx = 1
@@ -65,15 +67,25 @@ function require_player()
             max_dx = shell_state.max_dx
         end
 
+        local _die = function()
+            alive = false
+        end
+
         local collide_side = function()
             if velocity.x < 0 then
-                if fget(mget(pos_x / 8, pos_y / 8), 7) then
+                collided_spr = mget(pos_x / 8, pos_y / 8)
+                if fget(collided_spr, 6) then
+                    _die()
+                elseif fget(collided_spr, 7) then
                     velocity.x = 0
                     pos_x = flr(pos_x / 8) * 8 + 8
                     return true
                 end
             else
-                if fget(mget(pos_x / 8 + 1, pos_y / 8), 7) then
+                collided_spr = mget(pos_x / 8 + 1, pos_y / 8)
+                if fget(collided_spr, 6) then
+                    _die()
+                elseif fget(collided_spr, 7) then
                     velocity.x = 0
                     pos_x = flr(pos_x / 8) * 8
                     return true
@@ -156,6 +168,9 @@ function require_player()
         end
 
         return {
+            is_alive = function()
+                return alive
+            end,
             set_pos = function(x, y)
                 pos_x = x
                 pos_y = y
@@ -166,17 +181,23 @@ function require_player()
                 _change_state(new_state)
             end,
             update = function()
-                move_x()
-                handle_jump_and_gravity()
-                handle_action()
+                if alive then
+                    move_x()
+                    handle_jump_and_gravity()
+                    handle_action()
+                end
             end,
             draw = function()
-                animtick -= 1
-                if animtick <= 0 then
-                    sprite_idx = (sprite_idx) % #frames + 1
-                    animtick = 5
+                if alive then
+                    animtick -= 1
+                    if animtick <= 0 then
+                        sprite_idx = (sprite_idx) % #frames + 1
+                        animtick = 5
+                    end
+                    spr(frames[sprite_idx], pos_x, pos_y, 1, 1, flipx)
+                else
+                    spr(15, pos_x, pos_y, 1, 1, flipx)
                 end
-                spr(frames[sprite_idx], pos_x, pos_y, 1, 1, flipx)
             end,
             get_center_pos = function()
                 return new_vec(pos_x + 4, pos_y + 4)
