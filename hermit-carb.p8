@@ -11,7 +11,7 @@ function require_camera()
     end
 
     local function new_camera(player)
-        local pos = new_vec(0, 0)
+        local pos = new_vec(0, 0) -- This is the center of the camera.
         local offset = new_vec(0, 0)
 
         return {
