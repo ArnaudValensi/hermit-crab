@@ -21,8 +21,10 @@ function require_end_level_state()
             camera(0, 0)
 
             if (display_win) then
-                draw_text("you find a home !", 64, 64)
-                draw_text("but your princess is in another shell...", 64, 80)
+                draw_text("you found a home !", 64, 32)
+                draw_text("However...", 64, 48)
+                draw_text("Your princess is", 64, 64)
+                draw_text("in another shell", 64, 80)
                 draw_text("press 🅾️ / z to continue", 64, 120)
             else
                 draw_text("sadly... you died...", 64, 64)
