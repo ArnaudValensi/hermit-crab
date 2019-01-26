@@ -93,8 +93,8 @@ function require_end_level_state()
     local display_win = false
 
     local end_level_state = {
-        on_start = function(has_won)
-            display_win = has_won or false
+        on_start = function(option)
+            display_win = option and option.has_won or false
         end,
 
         on_stop = function()
@@ -263,7 +263,11 @@ function require_level()
                 _entities = filter(_entities, function(item) return not item.deleted end)
 
                 if (_state == 'won') then
-                    change_state(end_level_state)
+                    change_state(end_level_state, { has_won = true })
+                end
+
+                if (not player.is_alive()) then
+                    change_state(end_level_state, { has_won = false })
                 end
             end,
             draw = function()
@@ -608,11 +612,11 @@ play_state = require_play_state()
 end_level_state = require_end_level_state()
 start_state = require_start_state()
 
-function change_state(to_state)
+function change_state(to_state, options)
   cls()
   state.on_stop()
   state = to_state
-  to_state.on_start()
+  to_state.on_start(options)
   to_state.update()
 end
 

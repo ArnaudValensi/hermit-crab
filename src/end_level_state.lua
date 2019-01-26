@@ -2,8 +2,8 @@ function require_end_level_state()
     local display_win = false
 
     local end_level_state = {
-        on_start = function(has_won)
-            display_win = has_won or false
+        on_start = function(option)
+            display_win = option and option.has_won or false
         end,
 
         on_stop = function()

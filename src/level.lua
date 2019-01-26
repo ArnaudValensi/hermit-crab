@@ -60,7 +60,11 @@ function require_level()
                 _entities = filter(_entities, function(item) return not item.deleted end)
 
                 if (_state == 'won') then
-                    change_state(end_level_state)
+                    change_state(end_level_state, { has_won = true })
+                end
+
+                if (not player.is_alive()) then
+                    change_state(end_level_state, { has_won = false })
                 end
             end,
             draw = function()
