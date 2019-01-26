@@ -89,6 +89,41 @@ function draw_text(str,x,y,al,extra,c1,c2)
     print(str,x,y-1,c1)
     print(str,x,y,0)
 end
+function require_end_level_state()
+    local display_win = false
+
+    local end_level_state = {
+        on_start = function(has_won)
+            display_win = has_won or false
+        end,
+
+        on_stop = function()
+
+        end,
+
+        update = function()
+            if (btn(4) or btn(5)) then
+                change_state(play_state)
+            end
+        end,
+
+        draw = function()
+            cls()
+            camera(0, 0)
+
+            if (display_win) then
+                draw_text("you find a home !", 64, 64)
+                draw_text("but your princess is in another shell...", 64, 80)
+                draw_text("press 🅾️ / z to continue", 64, 120)
+            else
+                draw_text("sadly... you died...", 64, 64)
+                draw_text("press 🅾️ / z to retry", 64, 120)
+            end
+        end
+    }
+
+    return end_level_state
+end
 function require_entity()
 
     local basic_draw = function(self)
@@ -106,7 +141,7 @@ function require_entity()
             update = function(self, player, level)
                 local ppos = player.get_center_pos()
                 if (is_point_in_box(ppos.x, ppos.y, self.pos_x * 8, self.pos_y * 8, 24, 16)) then
-                    change_state(start_state)
+                    level.set_game_state('won')
                 end
             end,
             draw = function(self)
@@ -202,6 +237,7 @@ function require_level()
     local function new_level(idx)
         local _level = levels[idx]
         local _entities = {}
+        local _state = 'running'
 
         return {
             goal_pos = function()
@@ -209,6 +245,7 @@ function require_level()
             end,
             init = function(player)
                 _entities = {}
+                _state = 'running'
                 player.change_state(_level.player_start.state)
                 player.set_pos(_level.player_start.x, _level.player_start.y)
                 add(_entities, create_entity(_level.goal))
@@ -216,16 +253,23 @@ function require_level()
                     add(_entities, create_entity(params))
                 end
             end,
-            update = function(player)
+            update = function(self, player)
                 for entity in all(_entities) do
                     entity:update(player, self)
                 end
                 _entities = filter(_entities, function(item) return not item.deleted end)
+
+                if (_state == 'won') then
+                    change_state(end_level_state)
+                end
             end,
             draw = function()
                 for entity in all(_entities) do
                     entity:draw()
                 end
+            end,
+            set_game_state = function(new_state)
+                _state = new_state
             end
         }
     end
@@ -264,7 +308,7 @@ function require_play_state()
         update = function()
             player.update()
             cam.update()
-            level.update(player)
+            level:update(player)
             scheduler:update()
         end,
 
@@ -520,7 +564,7 @@ function require_scheduler()
 
     return new_scheduler
 end
-function require_start_state(change_state, play_state)
+function require_start_state()
     local start_state = {
         on_start = function()
 
@@ -557,6 +601,8 @@ new_scheduler = require_scheduler()
 new_level = require_level()
 new_entity = require_entity()
 play_state = require_play_state()
+end_level_state = require_end_level_state()
+start_state = require_start_state()
 
 function change_state(to_state)
   cls()
@@ -566,7 +612,6 @@ function change_state(to_state)
   to_state.update()
 end
 
-start_state = require_start_state(change_state, play_state)
 state = start_state
 
 function _init()
@@ -718,7 +763,7 @@ __map__
 000000000000000000000000000000000000000000000000000000000000000000000000000000000000007f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000007f7f7f000000000000
 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000007f7f7f0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __sfx__
-000100000e5500e5500f55010550125501355015550175501a5501d55021550275500150003500035000250003500015000150001500015000150001500035000250001500005000050000500005000050000500
+0001000000000000000e5500e5500f55010550125501355015550175501a5501d5502155027550015000350003500025000350001500015000150001500015000150003500025000150000500005000050000500
 0001000014050180501b0501e050200502005022050220502205022050210501f0501c0501905015050110500f050000000000000000000000000000000000000000000000000000000000000000000000000000
 0001000002050060500a0500c0500d0500e0500e0500e0500e0500d0500c0500a050080501100012000190001c000200000000000000000000000000000000000000000000000000000000000000000000000000
 010800002175021700217500e70021750017002175021750217501c7001c7501c7501c750297001f7501f7501f7502170021750217501f7001f7501f700217502175021750217502175021750217502175021750

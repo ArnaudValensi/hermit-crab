@@ -4,6 +4,8 @@ new_scheduler = require_scheduler()
 new_level = require_level()
 new_entity = require_entity()
 play_state = require_play_state()
+end_level_state = require_end_level_state()
+start_state = require_start_state()
 
 function change_state(to_state)
   cls()
@@ -13,7 +15,6 @@ function change_state(to_state)
   to_state.update()
 end
 
-start_state = require_start_state(change_state, play_state)
 state = start_state
 
 function _init()

@@ -34,6 +34,7 @@ function require_level()
     local function new_level(idx)
         local _level = levels[idx]
         local _entities = {}
+        local _state = 'running'
 
         return {
             goal_pos = function()
@@ -41,6 +42,7 @@ function require_level()
             end,
             init = function(player)
                 _entities = {}
+                _state = 'running'
                 player.change_state(_level.player_start.state)
                 player.set_pos(_level.player_start.x, _level.player_start.y)
                 add(_entities, create_entity(_level.goal))
@@ -48,16 +50,23 @@ function require_level()
                     add(_entities, create_entity(params))
                 end
             end,
-            update = function(player)
+            update = function(self, player)
                 for entity in all(_entities) do
                     entity:update(player, self)
                 end
                 _entities = filter(_entities, function(item) return not item.deleted end)
+
+                if (_state == 'won') then
+                    change_state(end_level_state)
+                end
             end,
             draw = function()
                 for entity in all(_entities) do
                     entity:draw()
                 end
+            end,
+            set_game_state = function(new_state)
+                _state = new_state
             end
         }
     end

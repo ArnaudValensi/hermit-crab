@@ -15,7 +15,7 @@ function require_entity()
             update = function(self, player, level)
                 local ppos = player.get_center_pos()
                 if (is_point_in_box(ppos.x, ppos.y, self.pos_x * 8, self.pos_y * 8, 24, 16)) then
-                    change_state(start_state)
+                    level.set_game_state('won')
                 end
             end,
             draw = function(self)

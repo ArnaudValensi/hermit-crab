@@ -1,4 +1,4 @@
-function require_start_state(change_state, play_state)
+function require_start_state()
     local start_state = {
         on_start = function()
 
