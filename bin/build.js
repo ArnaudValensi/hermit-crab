@@ -77,12 +77,13 @@ const CART_FILE = `${require('../package.json').name}.p8`;
   const gffData = getSection('__gff__');
   const mapData = getSection('__map__');
   const sfxData = getSection('__sfx__');
+  const musicData = getSection('__music__');
   const sourceFiles = await getFileList();
 
   console.log(`${chalk.blue('Building the following files:')}\n ${chalk.green('./src/index.lua\n ' + sourceFiles.join('\n '))}`);
 
   const luaData = readLuaFiles(sourceFiles);
-  const buildData = `${header}\n${luaData}\n${gfxData}\n${gffData}\n${mapData}\n${sfxData}`;
+  const buildData = `${header}\n${luaData}\n${gfxData}\n${gffData}\n${mapData}\n${sfxData}\n${musicData}`;
 
   fs.writeFileSync(CART_FILE, buildData);
 

@@ -13,7 +13,7 @@ function require_camera()
     end
 
     local function new_camera(new_target)
-        local pos = new_vec(0, 0) -- This is the center of the camera.
+        local pos = new_vec(0, 0) -- this is the center of the camera.
         local offset = new_vec(0, 0)
         local shake_offset = new_vec(0, 0)
         local shake_countdown = 0
@@ -365,14 +365,14 @@ function require_player()
             if (is_grounded) then
                 velocity.y = 0
 
-                if (jump_pressed) then -- Jump (z)
+                if (jump_pressed) then -- jump (z)
                     velocity.y = -jump_force
                     sfx(0)
                 end
             else
                 if (velocity.y < 0 and jump_pressed_before and jump_pressed == false) then
                     velocity.y = 0
-                elseif (velocity.y > 0) then -- Falling
+                elseif (velocity.y > 0) then -- falling
                     velocity.y = velocity.y + gravity * fall_coef
                 else
                     velocity.y = velocity.y + gravity
@@ -394,7 +394,7 @@ function require_player()
 
             is_grounded = collide_left or collide_right
 
-            if (is_grounded) then -- Fix y position
+            if (is_grounded) then -- fix y position
                 pos_y = pos_y - pos_y % 8
             end
         end
@@ -670,3 +670,12 @@ __sfx__
 000100000e5500e5500f55010550125501355015550175501a5501d55021550275500150003500035000250003500015000150001500015000150001500035000250001500005000050000500005000050000500
 0001000014050180501b0501e050200502005022050220502205022050210501f0501c0501905015050110500f050000000000000000000000000000000000000000000000000000000000000000000000000000
 0001000002050060500a0500c0500d0500e0500e0500e0500e0500d0500c0500a050080501100012000190001c000200000000000000000000000000000000000000000000000000000000000000000000000000
+010800002175021700217500e70021750017002175021750217501c7001c7501c7501c750297001f7501f7501f7502170021750217501f7001f7501f700217502175021750217502175021750217502175021750
+01100000217501c300207501f75011300133002175013300207501f7501230012300217501f100207501f75000000247502475024750217502175021750000000000003700000001a70019700000000170001700
+__music__
+00 41424344
+00 41424344
+00 41424344
+00 41424344
+00 02424344
+
