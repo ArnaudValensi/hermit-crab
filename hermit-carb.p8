@@ -62,9 +62,6 @@ function require_player()
 
                 jump_pressed = btn(4)
 
-                map_cell_spr = mget(pos_x / 8, (pos_y + 8) / 8);
-                is_grounded = fget(map_cell_spr, 7)
-
                 if (is_grounded) then
                     velocity.y = 0
 
@@ -88,6 +85,13 @@ function require_player()
                 end
 
                 pos_y = pos_y + velocity.y
+
+                map_cell_spr = mget(pos_x / 8, (pos_y + 8) / 8);
+                is_grounded = fget(map_cell_spr, 7)
+
+                if (is_grounded) then -- Fix y position
+                    pos_y = pos_y - pos_y % 8
+                end
             end,
             draw = function()
                 print(map_cell_spr, 0, 0, 7)
