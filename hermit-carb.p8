@@ -13,7 +13,7 @@ function require_camera()
     end
 
     local function new_camera(player)
-        local pos = new_vec(0, 0) -- this is the center of the camera.
+        local pos = new_vec(0, 0) -- This is the center of the camera.
         local offset = new_vec(0, 0)
         local shake_offset = new_vec(0, 0)
         local shake_countdown = 0
@@ -74,13 +74,13 @@ function require_player()
         ["round_shell"] = {
             frames = {2, 3},
             acc_x = 0.5,
-            dcc_x = 0.05,
+            dcc_x = 0,
             max_dx = 2,
         },
         ["round_shell_in_shell"] = {
             frames = {4, 5, 6, 7},
-            acc_x = 0.1,
-            dcc_x = 0.01,
+            acc_x = 0.3,
+            dcc_x = 2,
             max_dx = 10,
         },
     }
@@ -152,14 +152,14 @@ function require_player()
             if (is_grounded) then
                 velocity.y = 0
 
-                if (jump_pressed) then -- jump (z)
+                if (jump_pressed) then -- Jump (z)
                     velocity.y = -jump_force
                     sfx(0)
                 end
             else
                 if (velocity.y < 0 and jump_pressed_before and jump_pressed == false) then
                     velocity.y = 0
-                elseif (velocity.y > 0) then -- falling
+                elseif (velocity.y > 0) then -- Falling
                     velocity.y = velocity.y + gravity * fall_coef
                 else
                     velocity.y = velocity.y + gravity
@@ -181,7 +181,7 @@ function require_player()
 
             is_grounded = collide_left or collide_right
 
-            if (is_grounded) then -- fix y position
+            if (is_grounded) then -- Fix y position
                 pos_y = pos_y - pos_y % 8
             end
         end
@@ -240,7 +240,7 @@ end
 new_player = require_player()
 new_camera = require_camera()
 
--- globals
+-- Globals
 player = new_player()
 cam = new_camera(player)
 
@@ -259,7 +259,7 @@ function _draw()
   map(0, 0, 0, 0, 128, 128)
   player.draw()
 
-  -- hud
+  -- HUD
   camera(0, 0)
   -- print(cam.get_offset(), 0, 0, 7)
 end

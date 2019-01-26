@@ -20,13 +20,13 @@ function require_player()
         ["round_shell"] = {
             frames = {2, 3},
             acc_x = 0.5,
-            dcc_x = 0.05,
+            dcc_x = 0,
             max_dx = 2,
         },
         ["round_shell_in_shell"] = {
             frames = {4, 5, 6, 7},
-            acc_x = 0.1,
-            dcc_x = 0.01,
+            acc_x = 0.3,
+            dcc_x = 2,
             max_dx = 10,
         },
     }
