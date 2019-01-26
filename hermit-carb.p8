@@ -9,12 +9,41 @@ function require_player()
     local player_height = 8
     local map_cell_spr = 999
 
+    local default_acc_x=0.5
+    local default_dcc_x=0.05
+    local default_max_dx = 2
+
+    local shell_states = {
+        ["naked"] = {
+            frames = {0, 1},
+            acc_x = 0.5,
+            dcc_x = 0.05,
+            max_dx = 2,
+        },
+        ["round_shell"] = {
+            frames = {2, 3},
+            acc_x = 0.5,
+            dcc_x = 0.05,
+            max_dx = 2,
+        },
+        ["round_shell_in_shell"] = {
+            frames = {4, 5, 6, 7},
+            acc_x = 0.3,
+            dcc_x = 0.05,
+            max_dx = 10,
+        },
+    }
+
     function new_player()
         local pos_x = 0
         local pos_y = 0
-        local acc_x=0.5
-        local dcc_x=0.05
+        local animtick = 5
+        local frames={0, 1}
+        local acc_x = 0.5
+        local dcc_x = 0.05
         local max_dx = 2
+        local shell_state = shell_states["naked"]
+        local sprite_idx = 1
         local flipx = false
         local is_grounded = false
         local velocity = {
@@ -22,6 +51,15 @@ function require_player()
             y = 0,
         }
         local jump_pressed_before = false
+
+        local change_state = function(new_state)
+            shell_state = shell_states[new_state]
+            frames=shell_state.frames
+            sprite_idx = 1
+            acc_x = shell_state.acc_x
+            dcc_x = shell_state.dcc_x
+            max_dx = shell_state.max_dx
+        end
 
         local collide_side = function()
             if velocity.x < 0 then
@@ -102,8 +140,13 @@ function require_player()
                 handle_jump_and_gravity()
             end,
             draw = function()
-                print(map_cell_spr, 0, 0, 7)
-                spr(idle_sprite, pos_x, pos_y, 1, 1, flipx)
+                animtick -= 1
+                if animtick <= 0 then
+                    sprite_idx = (sprite_idx) % #frames + 1
+                    animtick = 5
+                end
+                print(sprite_idx, 0, 0, 7)
+                spr(frames[sprite_idx], pos_x, pos_y, 1, 1, flipx)
             end
         }
     end
