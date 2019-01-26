@@ -56,46 +56,49 @@ function require_player()
 			collide_side()
         end
 
+        local handle_jump_and_gravity = function()
+            local jump_pressed = btn(4)
+
+            if (is_grounded) then
+                velocity.y = 0
+
+                if (jump_pressed) then -- Jump (z)
+                    velocity.y = -jump_force
+                end
+            else
+                if (velocity.y < 0 and jump_pressed_before and jump_pressed == false) then
+                    velocity.y = 0
+                elseif (velocity.y > 0) then -- Falling
+                    velocity.y = velocity.y + gravity * fall_coef
+                else
+                    velocity.y = velocity.y + gravity
+                end
+            end
+
+            if (jump_pressed) then
+                jump_pressed_before = true
+            else
+                jump_pressed_before = false
+            end
+
+            pos_y = pos_y + velocity.y
+
+            local left_feet_spr = mget(pos_x / 8, (pos_y + 8) / 8);
+            local right_feet_spr = mget((pos_x + 7) / 8, (pos_y + 8) / 8);
+            local collide_left = fget(left_feet_spr, 7)
+            local collide_right = fget(right_feet_spr, 7)
+
+            is_grounded = collide_left or collide_right
+
+            if (is_grounded) then -- Fix y position
+                pos_y = pos_y - pos_y % 8
+            end
+        end
+
         return {
             update = function()
                 move_x()
-
-                local jump_pressed = btn(4)
-
-                if (is_grounded) then
-                    velocity.y = 0
-
-                    if (jump_pressed) then -- Jump (z)
-                        velocity.y = -jump_force
-                    end
-                else
-                    if (velocity.y < 0 and jump_pressed_before and jump_pressed == false) then
-                        velocity.y = 0
-                    elseif (velocity.y > 0) then -- Falling
-                        velocity.y = velocity.y + gravity * fall_coef
-                    else
-                        velocity.y = velocity.y + gravity
-                    end
-                end
-
-                if (jump_pressed) then
-                    jump_pressed_before = true
-                else
-                    jump_pressed_before = false
-                end
-
-                pos_y = pos_y + velocity.y
-
-                local left_feet_spr = mget(pos_x / 8, (pos_y + 8) / 8);
-                local right_feet_spr = mget((pos_x + 7) / 8, (pos_y + 8) / 8);
-                local collide_left = fget(left_feet_spr, 7)
-                local collide_right = fget(right_feet_spr, 7)
-
-                is_grounded = collide_left or collide_right
-
-                if (is_grounded) then -- Fix y position
-                    pos_y = pos_y - pos_y % 8
-                end
+                handle_jump_and_gravity()
             end,
             draw = function()
                 print(map_cell_spr, 0, 0, 7)
