@@ -137,9 +137,11 @@ function require_player()
             if (not action_pressed_before and action_pressed) then
                 action_pressed_before = true
                 _change_state("round_shell_in_shell")
+                sfx(1)
             elseif (action_pressed_before and not action_pressed) then
                 action_pressed_before = false
                 _change_state("round_shell")
+                sfx(2)
             end
         end
 

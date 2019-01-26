@@ -5,6 +5,8 @@ function require_camera()
     local half_screen = 64
     local smooth_speed = 0.2
     local vertical_offset = 24
+    local shake_force = 5
+    local shake_duration = 10
 
     local function lerp(a, b, t)
         return a + (b - a) * t
@@ -13,19 +15,37 @@ function require_camera()
     local function new_camera(player)
         local pos = new_vec(0, 0) -- this is the center of the camera.
         local offset = new_vec(0, 0)
+        local shake_offset = new_vec(0, 0)
+        local shake_countdown = 0
+
+        function update_shake()
+            if (shake_countdown > 0) then
+                shake_offset.x = rnd(shake_force) - (shake_force / 2)
+                shake_offset.y = rnd(shake_force) - (shake_force / 2)
+                shake_countdown -= 1
+            elseif (shake_countdown == 0) then
+                shake_offset.x = 0
+                shake_offset.y = 0
+            end
+        end
 
         return {
             update = function()
+                update_shake()
+
                 local player_center_pos = player.get_center_pos()
 
                 pos.x = lerp(pos.x, player_center_pos.x, smooth_speed)
                 pos.y = lerp(pos.y, player_center_pos.y, smooth_speed)
 
-                offset.x = pos.x - half_screen
-                offset.y = pos.y - half_screen - vertical_offset
+                offset.x = pos.x - half_screen + shake_offset.x
+                offset.y = pos.y - half_screen + shake_offset.y - vertical_offset
             end,
             get_offset = function()
                 return offset.x, offset.y
+            end,
+            add_shake = function()
+                shake_countdown = shake_duration
             end
         }
     end
@@ -171,9 +191,11 @@ function require_player()
             if (not action_pressed_before and action_pressed) then
                 action_pressed_before = true
                 _change_state("round_shell_in_shell")
+                sfx(1)
             elseif (action_pressed_before and not action_pressed) then
                 action_pressed_before = false
                 _change_state("round_shell")
+                sfx(2)
             end
         end
 
@@ -240,7 +262,7 @@ function _draw()
 
   -- hud
   camera(0, 0)
-  print(cam.get_offset(), 0, 0, 7)
+  -- print(cam.get_offset(), 0, 0, 7)
 end
 
 __gfx__
@@ -379,3 +401,5 @@ __map__
 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000041000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __sfx__
 000100000e5500e5500f55010550125501355015550175501a5501d55021550275500150003500035000250003500015000150001500015000150001500035000250001500005000050000500005000050000500
+0001000014050180501b0501e050200502005022050220502205022050210501f0501c0501905015050110500f050000000000000000000000000000000000000000000000000000000000000000000000000000
+0001000002050060500a0500c0500d0500e0500e0500e0500e0500d0500c0500a050080501100012000190001c000200000000000000000000000000000000000000000000000000000000000000000000000000
