@@ -4,6 +4,10 @@ function require_start_state(change_state, play_state)
 
         end,
 
+        on_stop = function()
+
+        end,
+
         update = function()
             if (btn(4) or btn(5)) then
                 change_state(play_state)

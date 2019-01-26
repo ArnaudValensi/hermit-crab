@@ -13,6 +13,11 @@ function require_play_state()
             }
             cam = new_camera(goal)
             scheduler:set_timeout(2, function() cam.set_target(player) end)
+            music(1)
+        end,
+
+        on_stop = function()
+            music(-1)
         end,
 
         update = function()

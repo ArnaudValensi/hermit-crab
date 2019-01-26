@@ -246,6 +246,11 @@ function require_play_state()
             }
             cam = new_camera(goal)
             scheduler:set_timeout(2, function() cam.set_target(player) end)
+            music(1)
+        end,
+
+        on_stop = function()
+            music(-1)
         end,
 
         update = function()
@@ -482,6 +487,10 @@ function require_start_state(change_state, play_state)
 
         end,
 
+        on_stop = function()
+
+        end,
+
         update = function()
             if (btn(4) or btn(5)) then
                 change_state(play_state)
@@ -512,6 +521,7 @@ play_state = require_play_state()
 
 function change_state(to_state)
   cls()
+  state.on_stop()
   state = to_state
   to_state.on_start()
   to_state.update()

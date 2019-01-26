@@ -7,6 +7,7 @@ play_state = require_play_state()
 
 function change_state(to_state)
   cls()
+  state.on_stop()
   state = to_state
   to_state.on_start()
   to_state.update()
