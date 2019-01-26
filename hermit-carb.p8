@@ -12,11 +12,12 @@ function require_camera()
         return a + (b - a) * t
     end
 
-    local function new_camera(player)
+    local function new_camera(new_target)
         local pos = new_vec(0, 0) -- This is the center of the camera.
         local offset = new_vec(0, 0)
         local shake_offset = new_vec(0, 0)
         local shake_countdown = 0
+        local target = new_target
 
         function update_shake()
             if (shake_countdown > 0) then
@@ -33,7 +34,9 @@ function require_camera()
             update = function()
                 update_shake()
 
-                local player_center_pos = player.get_center_pos()
+                local player_center_pos = target.get_center_pos()
+
+                print(player_center_pos.x..', '..player_center_pos.y, 0, 8, 7)
 
                 pos.x = lerp(pos.x, player_center_pos.x, smooth_speed)
                 pos.y = lerp(pos.y, player_center_pos.y, smooth_speed)
@@ -46,6 +49,9 @@ function require_camera()
             end,
             add_shake = function()
                 shake_countdown = shake_duration
+            end,
+            set_target = function(new_target)
+                target = new_target
             end
         }
     end
@@ -86,8 +92,8 @@ function require_player()
     }
 
     function new_player()
-        local pos_x = 0
-        local pos_y = 0
+        local pos_x = 2 * 8
+        local pos_y = 10 * 8
         local animtick = 5
         local frames={0, 1}
         local acc_x = 0.5
@@ -231,6 +237,35 @@ function require_player()
 
     return new_player
 end
+function require_scheduler()
+    function new_scheduler()
+        local scheduler = {
+        coroutine = nil,
+        update = function(self)
+            if self.coroutine and costatus(self.coroutine) != 'dead' then
+            coresume(self.coroutine)
+            else
+            self.coroutine = nil
+            end
+        end,
+        set_timeout = function (self, delay_in_s, fn)
+            self.coroutine = cocreate(function()
+            local tick_before_timeout = delay_in_s * 30
+
+            while (tick_before_timeout ~= 0) do
+                yield()
+                tick_before_timeout -= 1
+            end
+            fn()
+            end)
+        end
+        };
+
+        return scheduler
+    end
+
+    return new_scheduler
+end
 function new_vec(x, y)
     return {
         x = x,
@@ -239,18 +274,27 @@ function new_vec(x, y)
 end
 new_player = require_player()
 new_camera = require_camera()
+new_scheduler = require_scheduler()
 
 -- Globals
 player = new_player()
-cam = new_camera(player)
+scheduler = new_scheduler()
 
 function _init()
-    player.change_state("round_shell")
+  player.change_state("round_shell")
+  goal = {
+    get_center_pos = function()
+      return new_vec(75 * 8, 10 * 8)
+    end
+  }
+  cam = new_camera(goal)
+  scheduler:set_timeout(2, function() cam.set_target(player) end)
 end
 
 function _update()
   player.update()
   cam.update()
+  scheduler:update()
 end
 
 function _draw()

@@ -32,8 +32,8 @@ function require_player()
     }
 
     function new_player()
-        local pos_x = 0
-        local pos_y = 0
+        local pos_x = 2 * 8
+        local pos_y = 10 * 8
         local animtick = 5
         local frames={0, 1}
         local acc_x = 0.5
