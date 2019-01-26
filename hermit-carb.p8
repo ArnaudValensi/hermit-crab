@@ -232,12 +232,11 @@ function require_player()
     return new_player
 end
 function new_vec(x, y)
-  return {
-    x = x,
-    y = y,
-  }
+    return {
+        x = x,
+        y = y,
+    }
 end
-
 new_player = require_player()
 new_camera = require_camera()
 
