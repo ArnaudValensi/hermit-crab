@@ -22,7 +22,7 @@ function require_level()
                     type = "round_shell",
                     x = 52,
                     y = 12,
-                }
+                },
             }
         }
     }

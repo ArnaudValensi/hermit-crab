@@ -1,5 +1,14 @@
 function require_entity()
 
+    local basic_draw = function(self)
+        self.animtick -= 1
+        if self.animtick <= 0 then
+            self.sprite_idx = (self.sprite_idx) % #(self.frames) + 1
+            self.animtick = 5
+        end
+        spr(self.frames[self.sprite_idx], self.pos_x * 8, self.pos_y * 8)
+    end
+
     local entities = {
         ["goal"] = {
             frames = {192},
@@ -26,15 +35,14 @@ function require_entity()
                     self.deleted = true
                 end
             end,
-            draw = function(shell)
-                shell.animtick -= 1
-                if shell.animtick <= 0 then
-                    shell.sprite_idx = (shell.sprite_idx) % #(shell.frames) + 1
-                    shell.animtick = 5
-                end
-                spr(shell.frames[shell.sprite_idx], shell.pos_x * 8, shell.pos_y * 8)
-            end
-        }
+            draw = basic_draw,
+        },
+        ["box_shell"] = {
+            frames = {49, 50},
+            update = function(self, player, level)
+            end,
+            draw = basic_draw,
+        },
     }
 
     local function new_entity(x, y, entity_type)
