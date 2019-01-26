@@ -240,6 +240,8 @@ function require_level()
         local _level = levels[idx]
         local _entities = {}
         local _state = 'running'
+        local _scheduler = nil
+        local _state_transitionning = false
 
         return {
             goal_pos = function()
@@ -248,9 +250,11 @@ function require_level()
             get_viewport = function()
                 return _level.viewport
             end,
-            init = function(player)
+            init = function(player, scheduler)
                 _entities = {}
                 _state = 'running'
+                _scheduler = scheduler
+                _state_transitionning = false
                 player.change_state(_level.player_start.state)
                 player.set_pos(_level.player_start.x, _level.player_start.y)
                 add(_entities, create_entity(_level.goal))
@@ -264,13 +268,18 @@ function require_level()
                 end
                 _entities = filter(_entities, function(item) return not item.deleted end)
 
-                if (_state == 'won') then
+                if (_state == 'won' and not _state_transitionning) then
                     change_state(end_level_state, { has_won = true })
+                    _state_transitionning = true
                 end
 
-                if (not player.is_alive()) then
+                if (not player.is_alive() and not _state_transitionning) then
+                    printh('transition', 'log')
                     sfx(14)
-                    change_state(end_level_state, { has_won = false })
+                    _scheduler:set_timeout(2, function()
+                        change_state(end_level_state, { has_won = false })
+                    end)
+                    _state_transitionning = true
                 end
             end,
             draw = function()
@@ -300,7 +309,7 @@ function require_play_state()
 
     local play_state = {
         on_start = function()
-            level.init(player)
+            level.init(player, scheduler)
             goal = {
                 get_center_pos = function()
                     return level.goal_pos()

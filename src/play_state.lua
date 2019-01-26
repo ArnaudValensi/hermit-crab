@@ -5,7 +5,7 @@ function require_play_state()
 
     local play_state = {
         on_start = function()
-            level.init(player)
+            level.init(player, scheduler)
             goal = {
                 get_center_pos = function()
                     return level.goal_pos()
