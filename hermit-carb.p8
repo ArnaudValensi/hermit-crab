@@ -2,28 +2,28 @@ pico-8 cartridge // http://www.pico-8.com
 version 16
 __lua__
 function require_player()
-    idle_sprite = 1
-    gravity = 0.5
-    jump_force = 5
-    fall_coef = 2
-    player_height = 8
-    map_cell_spr = 999
+    local idle_sprite = 1
+    local gravity = 0.5
+    local jump_force = 5
+    local fall_coef = 2
+    local player_height = 8
+    local map_cell_spr = 999
 
     function new_player()
-        pos_x = 0
-        pos_y = 0
-        acc_x=0.5
-        dcc_x=0.05
-        max_dx = 2
-        flipx = false
-        is_grounded = false
-        velocity = {
+        local pos_x = 0
+        local pos_y = 0
+        local acc_x=0.5
+        local dcc_x=0.05
+        local max_dx = 2
+        local flipx = false
+        local is_grounded = false
+        local velocity = {
             x = 0,
             y = 0,
         }
-        jump_pressed_before = false
+        local jump_pressed_before = false
 
-        collide_side = function()
+        local collide_side = function()
             if velocity.x < 0 then
                 if fget(mget(pos_x / 8, pos_y / 8), 7) then
                     velocity.x = 0
@@ -40,7 +40,7 @@ function require_player()
             end
         end
 
-        move_x = function()
+        local move_x = function()
             if (btn(0)) then
                 velocity.x -= acc_x
                 flipx = true
@@ -60,7 +60,7 @@ function require_player()
             update = function()
                 move_x()
 
-                jump_pressed = btn(4)
+                local jump_pressed = btn(4)
 
                 if (is_grounded) then
                     velocity.y = 0
