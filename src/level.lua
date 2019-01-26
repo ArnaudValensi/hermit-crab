@@ -40,6 +40,7 @@ function require_level()
                 return new_vec(_level.goal.x * 8, _level.goal.y * 8)
             end,
             init = function(player)
+                _entities = {}
                 player.change_state(_level.player_start.state)
                 player.set_pos(_level.player_start.x, _level.player_start.y)
                 add(_entities, create_entity(_level.goal))
