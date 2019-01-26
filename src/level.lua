@@ -11,7 +11,7 @@ function require_level()
                 x = 124,
                 y = 5,
             },
-            layout = {
+            viewport = {
                 left = 0,
                 right = 128,
                 top = 0,
@@ -39,6 +39,9 @@ function require_level()
         return {
             goal_pos = function()
                 return new_vec(_level.goal.x * 8, _level.goal.y * 8)
+            end,
+            get_viewport = function()
+                return _level.viewport
             end,
             init = function(player)
                 _entities = {}
