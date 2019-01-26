@@ -16,18 +16,24 @@ function require_player()
             acc_x = 0.5,
             dcc_x = 0.05,
             max_dx = 2,
+            action_push = nil,
+            action_release = nil,
         },
         ["round_shell"] = {
             frames = {2, 3},
             acc_x = 0.5,
             dcc_x = 0,
             max_dx = 2,
+            action_push = "round_shell_in_shell",
+            action_release = nil,
         },
         ["round_shell_in_shell"] = {
             frames = {4, 5, 6, 7},
             acc_x = 0.1,
             dcc_x = 0.01,
             max_dx = 10,
+            action_push = nil,
+            action_release = "round_shell",
         },
     }
 
@@ -136,12 +142,16 @@ function require_player()
             local action_pressed = btn(5)
             if (not action_pressed_before and action_pressed) then
                 action_pressed_before = true
-                _change_state("round_shell_in_shell")
-                sfx(1)
+                if shell_state.action_push then
+                    _change_state(shell_state.action_push)
+                    sfx(1)
+                end
             elseif (action_pressed_before and not action_pressed) then
                 action_pressed_before = false
-                _change_state("round_shell")
-                sfx(2)
+                if shell_state.action_release then
+                    _change_state(shell_state.action_release)
+                    sfx(2)
+                end
             end
         end
 
