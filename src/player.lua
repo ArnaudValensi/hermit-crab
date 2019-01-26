@@ -20,7 +20,7 @@ function require_player()
         ["round_shell"] = {
             frames = {2, 3},
             acc_x = 0.5,
-            dcc_x = 0.05,
+            dcc_x = 0,
             max_dx = 2,
         },
         ["round_shell_in_shell"] = {
@@ -32,8 +32,8 @@ function require_player()
     }
 
     function new_player()
-        local pos_x = 0
-        local pos_y = 0
+        local pos_x = 2 * 8
+        local pos_y = 10 * 8
         local animtick = 5
         local frames={0, 1}
         local acc_x = 0.5

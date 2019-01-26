@@ -9,11 +9,12 @@ function require_camera()
         return a + (b - a) * t
     end
 
-    local function new_camera(player)
+    local function new_camera(new_target)
         local pos = new_vec(0, 0) -- This is the center of the camera.
         local offset = new_vec(0, 0)
         local shake_offset = new_vec(0, 0)
         local shake_countdown = 0
+        local target = new_target
 
         function update_shake()
             if (shake_countdown > 0) then
@@ -30,7 +31,9 @@ function require_camera()
             update = function()
                 update_shake()
 
-                local player_center_pos = player.get_center_pos()
+                local player_center_pos = target.get_center_pos()
+
+                print(player_center_pos.x..', '..player_center_pos.y, 0, 8, 7)
 
                 pos.x = lerp(pos.x, player_center_pos.x, smooth_speed)
                 pos.y = lerp(pos.y, player_center_pos.y, smooth_speed)
@@ -43,6 +46,9 @@ function require_camera()
             end,
             add_shake = function()
                 shake_countdown = shake_duration
+            end,
+            set_target = function(new_target)
+                target = new_target
             end
         }
     end

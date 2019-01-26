@@ -1,24 +1,26 @@
-function new_vec(x, y)
-  return {
-    x = x,
-    y = y,
-  }
-end
-
 new_player = require_player()
 new_camera = require_camera()
+new_scheduler = require_scheduler()
 
 -- Globals
 player = new_player()
-cam = new_camera(player)
+scheduler = new_scheduler()
 
 function _init()
-    player.change_state("round_shell")
+  player.change_state("round_shell")
+  goal = {
+    get_center_pos = function()
+      return new_vec(75 * 8, 10 * 8)
+    end
+  }
+  cam = new_camera(goal)
+  scheduler:set_timeout(2, function() cam.set_target(player) end)
 end
 
 function _update()
   player.update()
   cam.update()
+  scheduler:update()
 end
 
 function _draw()
