@@ -61,6 +61,7 @@ function require_player()
 
                 if (jump_pressed) then -- Jump (z)
                     velocity.y = -jump_force
+                    sfx(0)
                 end
             else
                 if (velocity.y < 0 and jump_pressed_before and jump_pressed == false) then
