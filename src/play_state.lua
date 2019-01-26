@@ -18,7 +18,7 @@ function require_play_state()
         update = function()
             player.update()
             cam.update()
-            level.update()
+            level.update(player)
             scheduler:update()
         end,
 

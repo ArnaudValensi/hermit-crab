@@ -49,12 +49,13 @@ function require_level()
             end,
             update = function(player)
                 for entity in all(_entities) do
-                    entity.update(player, self)
+                    entity:update(player, self)
                 end
+                _entities = filter(_entities, function(item) return not item.deleted end)
             end,
             draw = function()
                 for entity in all(_entities) do
-                    entity.draw(entity)
+                    entity:draw()
                 end
             end
         }

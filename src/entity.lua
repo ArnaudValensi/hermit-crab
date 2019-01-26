@@ -4,6 +4,10 @@ function require_entity()
         ["goal"] = {
             frames = {192},
             update = function(self, player, level)
+                local ppos = player.get_center_pos()
+                if (is_point_in_box(ppos.x, ppos.y, self.pos_x * 8, self.pos_y * 8, 24, 16)) then
+                    change_state(start_state)
+                end
             end,
             draw = function(self)
                 spr(116, self.pos_x * 8, (self.pos_y + 1) * 8)
@@ -15,8 +19,12 @@ function require_entity()
         },
         ["round_shell"] = {
             frames = {33, 34},
-            update = function(shell, player, level)
-
+            update = function(self, player, level)
+                local ppos = player.get_center_pos()
+                if (is_point_in_box(ppos.x, ppos.y, self.pos_x * 8, self.pos_y * 8, 8, 8)) then
+                    player.change_state("round_shell")
+                    self.deleted = true
+                end
             end,
             draw = function(shell)
                 shell.animtick -= 1
@@ -33,6 +41,7 @@ function require_entity()
         local _factory = entities[entity_type]
 
         return {
+            deleted = false,
             pos_x = x,
             pos_y = y,
             animtick = 5,

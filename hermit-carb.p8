@@ -95,6 +95,10 @@ function require_entity()
         ["goal"] = {
             frames = {192},
             update = function(self, player, level)
+                local ppos = player.get_center_pos()
+                if (is_point_in_box(ppos.x, ppos.y, self.pos_x * 8, self.pos_y * 8, 24, 16)) then
+                    change_state(start_state)
+                end
             end,
             draw = function(self)
                 spr(116, self.pos_x * 8, (self.pos_y + 1) * 8)
@@ -106,8 +110,12 @@ function require_entity()
         },
         ["round_shell"] = {
             frames = {33, 34},
-            update = function(shell, player, level)
-
+            update = function(self, player, level)
+                local ppos = player.get_center_pos()
+                if (is_point_in_box(ppos.x, ppos.y, self.pos_x * 8, self.pos_y * 8, 8, 8)) then
+                    player.change_state("round_shell")
+                    self.deleted = true
+                end
             end,
             draw = function(shell)
                 shell.animtick -= 1
@@ -124,6 +132,7 @@ function require_entity()
         local _factory = entities[entity_type]
 
         return {
+            deleted = false,
             pos_x = x,
             pos_y = y,
             animtick = 5,
@@ -139,6 +148,15 @@ function require_entity()
     end
 
     return new_entity
+end
+function filter(tbl, fn)
+    newtbl = {}
+    for item in all(tbl) do
+        if fn(item) then
+            newtbl[#newtbl + 1] = item
+        end
+    end
+    return newtbl
 end
 function require_level()
     local levels = {
@@ -191,18 +209,26 @@ function require_level()
             end,
             update = function(player)
                 for entity in all(_entities) do
-                    entity.update(player, self)
+                    entity:update(player, self)
                 end
+                _entities = filter(_entities, function(item) return not item.deleted end)
             end,
             draw = function()
                 for entity in all(_entities) do
-                    entity.draw(entity)
+                    entity:draw()
                 end
             end
         }
     end
 
     return new_level
+end
+function is_point_in_box(px,py,x,y,w,h)
+	if flr(px)>=flr(x) and flr(px)<flr(x+w) and flr(py)>=flr(y) and flr(py)<flr(y+h) then
+		return true
+	else
+		return false
+	end
 end
 function require_play_state()
     local player = new_player()
@@ -224,7 +250,7 @@ function require_play_state()
         update = function()
             player.update()
             cam.update()
-            level.update()
+            level.update(player)
             scheduler:update()
         end,
 
@@ -407,11 +433,7 @@ function require_player()
                     sprite_idx = (sprite_idx) % #frames + 1
                     animtick = 5
                 end
-                print(sprite_idx, 0, 0, 7)
                 spr(frames[sprite_idx], pos_x, pos_y, 1, 1, flipx)
-            end,
-            get_pos_x = function()
-                return pos_x
             end,
             get_center_pos = function()
                 return new_vec(pos_x + 4, pos_y + 4)
