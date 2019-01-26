@@ -160,6 +160,12 @@ function require_player()
                 end
                 print(sprite_idx, 0, 0, 7)
                 spr(frames[sprite_idx], pos_x, pos_y, 1, 1, flipx)
+            end,
+            get_pos_x = function()
+                return pos_x
+            end,
+            get_width = function()
+                return 8
             end
         }
     end
