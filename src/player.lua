@@ -146,6 +146,12 @@ function require_player()
         end
 
         return {
+            set_pos = function(x, y)
+                pos_x = x
+                pos_y = y
+                velocity.x = 0
+                velocity.y = 0
+            end,
             change_state = function(new_state)
                 _change_state(new_state)
             end,

@@ -58,6 +58,36 @@ function require_camera()
 
     return new_camera
 end
+function require_level()
+    local levels = {
+        {
+            player_start = {
+                x = 2 * 8,
+                y = 10 * 8,
+                state = "naked"
+            },
+            layout = {
+                left = 0,
+                right = 128,
+                top = 0,
+                bottom = 16
+            }
+        }
+    }
+
+    local function new_level(idx)
+        local _level = levels[idx]
+
+        return {
+            init = function(player)
+                player.change_state(_level.player_start.state)
+                player.set_pos(_level.player_start.x, _level.player_start.y)
+            end
+        }
+    end
+
+    return new_level
+end
 function require_player()
     local idle_sprite = 1
     local gravity = 0.5
@@ -206,6 +236,12 @@ function require_player()
         end
 
         return {
+            set_pos = function(x, y)
+                pos_x = x
+                pos_y = y
+                velocity.x = 0
+                velocity.y = 0
+            end,
             change_state = function(new_state)
                 _change_state(new_state)
             end,
@@ -275,37 +311,39 @@ end
 new_player = require_player()
 new_camera = require_camera()
 new_scheduler = require_scheduler()
+new_level = require_level()
 
 -- Globals
 player = new_player()
 scheduler = new_scheduler()
+level = new_level(1)
 
 function _init()
-  player.change_state("round_shell")
-  goal = {
-    get_center_pos = function()
-      return new_vec(75 * 8, 10 * 8)
-    end
-  }
-  cam = new_camera(goal)
-  scheduler:set_timeout(2, function() cam.set_target(player) end)
+    level.init(player)
+    goal = {
+        get_center_pos = function()
+            return new_vec(125 * 8, 10 * 8)
+        end
+    }
+    cam = new_camera(goal)
+    scheduler:set_timeout(2, function() cam.set_target(player) end)
 end
 
 function _update()
-  player.update()
-  cam.update()
-  scheduler:update()
+    player.update()
+    cam.update()
+    scheduler:update()
 end
 
 function _draw()
-  cls()
-  camera(cam.get_offset())
-  map(0, 0, 0, 0, 128, 128)
-  player.draw()
+    cls()
+    camera(cam.get_offset())
+    map(0, 0, 0, 0, 128, 128)
+    player.draw()
 
-  -- HUD
-  camera(0, 0)
-  -- print(cam.get_offset(), 0, 0, 7)
+    -- HUD
+    camera(0, 0)
+    -- print(cam.get_offset(), 0, 0, 7)
 end
 
 __gfx__
