@@ -238,9 +238,9 @@ function require_level()
 
     local function new_level(idx)
         local _level = levels[idx]
+        local _player = nil
         local _entities = {}
         local _state = 'running'
-        local _scheduler = nil
         local _state_transitionning = false
 
         return {
@@ -250,10 +250,10 @@ function require_level()
             get_viewport = function()
                 return _level.viewport
             end,
-            init = function(player, scheduler)
+            init = function(player)
                 _entities = {}
+                _player = player
                 _state = 'running'
-                _scheduler = scheduler
                 _state_transitionning = false
                 player.change_state(_level.player_start.state)
                 player.set_pos(_level.player_start.x, _level.player_start.y)
@@ -262,24 +262,14 @@ function require_level()
                     add(_entities, create_entity(params))
                 end
             end,
-            update = function(self, player)
+            update = function(self)
                 for entity in all(_entities) do
-                    entity:update(player, self)
+                    entity:update(_player, self)
                 end
                 _entities = filter(_entities, function(item) return not item.deleted end)
 
-                if (_state == 'won' and not _state_transitionning) then
-                    change_state(end_level_state, { has_won = true })
-                    _state_transitionning = true
-                end
-
-                if (not player.is_alive() and not _state_transitionning) then
-                    printh('transition', 'log')
-                    sfx(14)
-                    _scheduler:set_timeout(2, function()
-                        change_state(end_level_state, { has_won = false })
-                    end)
-                    _state_transitionning = true
+                if (not _player.is_alive() and _state == 'running') then
+                    _state = 'lost'
                 end
             end,
             draw = function()
@@ -289,6 +279,12 @@ function require_level()
             end,
             set_game_state = function(new_state)
                 _state = new_state
+            end,
+            is_ended = function()
+                return _state != 'running'
+            end,
+            has_won = function()
+                return _state == 'won'
             end
         }
     end
@@ -306,10 +302,29 @@ function require_play_state()
     local player = new_player()
     local scheduler = new_scheduler()
     local level = new_level(1)
+    local state_transitionning = false
+
+    function start_end_transition()
+        if (not state_transitionning) then
+            if (level.has_won()) then
+                sfx(3)
+                scheduler:set_timeout(2, function()
+                    change_state(end_level_state, { has_won = true })
+                end)
+            else
+                sfx(14)
+                scheduler:set_timeout(2, function()
+                    change_state(end_level_state, { has_won = false })
+                end)
+            end
+            state_transitionning = true
+        end
+    end
 
     local play_state = {
         on_start = function()
-            level.init(player, scheduler)
+            state_transitionning = false
+            level.init(player)
             goal = {
                 get_center_pos = function()
                     return level.goal_pos()
@@ -325,9 +340,15 @@ function require_play_state()
         end,
 
         update = function()
-            player.update()
-            cam.update()
-            level:update(player)
+            level:update()
+
+            if (level.is_ended()) then
+                start_end_transition()
+            else
+                player.update()
+                cam.update()
+            end
+
             scheduler:update()
         end,
 

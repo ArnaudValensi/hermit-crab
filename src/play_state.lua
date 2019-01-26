@@ -2,10 +2,29 @@ function require_play_state()
     local player = new_player()
     local scheduler = new_scheduler()
     local level = new_level(1)
+    local state_transitionning = false
+
+    function start_end_transition()
+        if (not state_transitionning) then
+            if (level.has_won()) then
+                sfx(3)
+                scheduler:set_timeout(2, function()
+                    change_state(end_level_state, { has_won = true })
+                end)
+            else
+                sfx(14)
+                scheduler:set_timeout(2, function()
+                    change_state(end_level_state, { has_won = false })
+                end)
+            end
+            state_transitionning = true
+        end
+    end
 
     local play_state = {
         on_start = function()
-            level.init(player, scheduler)
+            state_transitionning = false
+            level.init(player)
             goal = {
                 get_center_pos = function()
                     return level.goal_pos()
@@ -21,9 +40,15 @@ function require_play_state()
         end,
 
         update = function()
-            player.update()
-            cam.update()
-            level:update(player)
+            level:update()
+
+            if (level.is_ended()) then
+                start_end_transition()
+            else
+                player.update()
+                cam.update()
+            end
+
             scheduler:update()
         end,
 
