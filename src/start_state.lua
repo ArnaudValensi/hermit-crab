@@ -12,6 +12,7 @@ function require_start_state(change_state, play_state)
 
         draw = function()
             cls()
+            camera(0, 0)
             draw_text("press 🅾️ / z to start ", 64, 120)
         end
     }
