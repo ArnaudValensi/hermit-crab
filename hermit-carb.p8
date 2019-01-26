@@ -2,7 +2,7 @@ pico-8 cartridge // http://www.pico-8.com
 version 16
 __lua__
 function require_camera()
-    local screen_width = 128;
+    local half_screen_width = 64;
 
     local function new_camera(player)
         local offset_x = 0
@@ -11,7 +11,7 @@ function require_camera()
         return {
             update = function()
                 local player_pos_x = player.get_pos_x()
-                offset_x = player_pos_x - screen_width / 2
+                offset_x = player_pos_x + 4 - half_screen_width
             end,
             get_offset = function()
                 return offset_x
@@ -214,9 +214,12 @@ end
 function _draw()
   cls()
   camera(cam.get_offset(), 0)
-  print(cam.get_offset(), cam.get_offset(), 0, 7)
   map(0, 0, 0, 0, 128, 128)
   player.draw()
+
+  -- HUD
+  camera(0, 0)
+  print(cam.get_offset(), 0, 0, 7)
 end
 
 __gfx__

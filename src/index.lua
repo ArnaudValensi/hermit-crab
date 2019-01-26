@@ -17,7 +17,10 @@ end
 function _draw()
   cls()
   camera(cam.get_offset(), 0)
-  print(cam.get_offset(), cam.get_offset(), 0, 7)
   map(0, 0, 0, 0, 128, 128)
   player.draw()
+
+  -- HUD
+  camera(0, 0)
+  print(cam.get_offset(), 0, 0, 7)
 end

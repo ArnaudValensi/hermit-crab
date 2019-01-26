@@ -1,5 +1,5 @@
 function require_camera()
-    local screen_width = 128;
+    local half_screen_width = 64;
 
     local function new_camera(player)
         local offset_x = 0
@@ -8,7 +8,7 @@ function require_camera()
         return {
             update = function()
                 local player_pos_x = player.get_pos_x()
-                offset_x = player_pos_x - screen_width / 2
+                offset_x = player_pos_x + 4 - half_screen_width
             end,
             get_offset = function()
                 return offset_x
