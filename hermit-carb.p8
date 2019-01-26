@@ -52,7 +52,7 @@ function require_player()
         }
         local jump_pressed_before = false
 
-        local change_state = function(new_state)
+        local _change_state = function(new_state)
             shell_state = shell_states[new_state]
             frames=shell_state.frames
             sprite_idx = 1
@@ -134,10 +134,21 @@ function require_player()
             end
         end
 
+        local handle_action = function()
+            local action_pressed = btn(5)
+            if (action_pressed) then
+                _change_state("round_shell_in_shell")
+            end
+        end
+
         return {
+            change_state = function(new_state)
+                _change_state(new_state)
+            end,
             update = function()
                 move_x()
                 handle_jump_and_gravity()
+                handle_action()
             end,
             draw = function()
                 animtick -= 1
@@ -158,16 +169,20 @@ new_player = require_player()
 -- Globals
 player = new_player()
 
+function _init()
+    player.change_state("round_shell")
+end
+
 function _update()
-  player.update()
+    player.update()
 end
 
 function _draw()
-  cls()
-  camera(0, 0)
-  map(0, 0, 0, 0, 16, 16)
-  camera(cam_x, cam_y)
-  player.draw()
+    cls()
+    camera(0, 0)
+    map(0, 0, 0, 0, 16, 16)
+    camera(cam_x, cam_y)
+    player.draw()
 end
 
 __gfx__
