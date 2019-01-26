@@ -48,6 +48,7 @@ function require_player()
             y = 0,
         }
         local jump_pressed_before = false
+        local action_pressed_before = false
 
         local _change_state = function(new_state)
             shell_state = shell_states[new_state]
@@ -133,8 +134,12 @@ function require_player()
 
         local handle_action = function()
             local action_pressed = btn(5)
-            if (action_pressed) then
+            if (not action_pressed_before and action_pressed) then
+                action_pressed_before = true
                 _change_state("round_shell_in_shell")
+            elseif (action_pressed_before and not action_pressed) then
+                action_pressed_before = false
+                _change_state("round_shell")
             end
         end
 
