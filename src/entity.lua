@@ -1,6 +1,18 @@
 function require_entity()
 
     local entities = {
+        ["goal"] = {
+            frames = {192},
+            update = function(self, player, level)
+            end,
+            draw = function(self)
+                spr(116, self.pos_x * 8, (self.pos_y + 1) * 8)
+                spr(192, (self.pos_x + 1) * 8, self.pos_y * 8)
+                spr(193, (self.pos_x + 2) * 8, self.pos_y * 8)
+                spr(208, (self.pos_x + 1) * 8, (self.pos_y + 1) * 8)
+                spr(209, (self.pos_x + 2) * 8, (self.pos_y + 1) * 8)
+            end
+        },
         ["round_shell"] = {
             frames = {33, 34},
             update = function(shell, player, level)
@@ -18,7 +30,7 @@ function require_entity()
     }
 
     local function new_entity(x, y, entity_type)
-        _factory = entities[entity_type]
+        local _factory = entities[entity_type]
 
         return {
             pos_x = x,

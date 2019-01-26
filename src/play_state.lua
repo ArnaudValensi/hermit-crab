@@ -8,7 +8,7 @@ function require_play_state()
             level.init(player)
             goal = {
                 get_center_pos = function()
-                return new_vec(75 * 8, 10 * 8)
+                    return level.goal_pos()
                 end
             }
             cam = new_camera(goal)

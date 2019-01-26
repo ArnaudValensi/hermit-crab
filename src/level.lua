@@ -6,6 +6,11 @@ function require_level()
                 y = 10 * 8,
                 state = "naked"
             },
+            goal = {
+                type = "goal",
+                x = 124,
+                y = 5,
+            },
             layout = {
                 left = 0,
                 right = 128,
@@ -31,9 +36,13 @@ function require_level()
         local _entities = {}
 
         return {
+            goal_pos = function()
+                return new_vec(_level.goal.x * 8, _level.goal.y * 8)
+            end,
             init = function(player)
                 player.change_state(_level.player_start.state)
                 player.set_pos(_level.player_start.x, _level.player_start.y)
+                add(_entities, create_entity(_level.goal))
                 for params in all(_level.entities) do
                     add(_entities, create_entity(params))
                 end
