@@ -58,6 +58,45 @@ function require_camera()
 
     return new_camera
 end
+function require_entity()
+
+    local entities = {
+        ["round_shell"] = {
+            frames = {33, 34},
+            update = function(shell, player, level)
+
+            end,
+            draw = function(shell)
+                shell.animtick -= 1
+                if shell.animtick <= 0 then
+                    shell.sprite_idx = (shell.sprite_idx) % #(shell.frames) + 1
+                    shell.animtick = 5
+                end
+                spr(shell.frames[shell.sprite_idx], shell.pos_x * 8, shell.pos_y * 8)
+            end
+        }
+    }
+
+    local function new_entity(x, y, entity_type)
+        _factory = entities[entity_type]
+
+        return {
+            pos_x = x,
+            pos_y = y,
+            animtick = 5,
+            frames = _factory.frames,
+            sprite_idx = _factory.frames[1],
+            update = function(self, player, level)
+                _factory.update(self, player, level)
+            end,
+            draw = function(self)
+                _factory.draw(self)
+            end,
+        }
+    end
+
+    return new_entity
+end
 function require_level()
     local levels = {
         {
@@ -71,17 +110,42 @@ function require_level()
                 right = 128,
                 top = 0,
                 bottom = 16
+            },
+            entities = {
+                {
+                    type = "round_shell",
+                    x = 52,
+                    y = 12,
+                }
             }
         }
     }
 
+    local function create_entity(params)
+        return new_entity(params.x, params.y, params.type)
+    end
+
     local function new_level(idx)
         local _level = levels[idx]
+        local _entities = {}
 
         return {
             init = function(player)
                 player.change_state(_level.player_start.state)
                 player.set_pos(_level.player_start.x, _level.player_start.y)
+                for params in all(_level.entities) do
+                    add(_entities, create_entity(params))
+                end
+            end,
+            update = function(player)
+                for entity in all(_entities) do
+                    entity.update(player, self)
+                end
+            end,
+            draw = function()
+                for entity in all(_entities) do
+                    entity.draw(entity)
+                end
             end
         }
     end
@@ -312,6 +376,7 @@ new_player = require_player()
 new_camera = require_camera()
 new_scheduler = require_scheduler()
 new_level = require_level()
+new_entity = require_entity()
 
 -- Globals
 player = new_player()
@@ -332,6 +397,7 @@ end
 function _update()
     player.update()
     cam.update()
+    level.update()
     scheduler:update()
 end
 
@@ -339,6 +405,7 @@ function _draw()
     cls()
     camera(cam.get_offset())
     map(0, 0, 0, 0, 128, 128)
+    level.draw()
     player.draw()
 
     -- HUD
@@ -475,7 +542,7 @@ __map__
 5380808080808080808080808080808080808080808080808080808080808080808080808080704141619180808080808080808080808060414141414141526180808080808080808080808080808080808080808080808080808080808080808081828080808080808080808080808080808080808080808091806041414141
 538080808080808080808080808080707180808080808080808080808080808080808080808060414141718080808080818280808080806041414141414141614f4f4f4f4f4f707180808080808080808080808080808080808080808043808080808080808080808080808080808080808080808080808070714f6041414141
 5380808080808080808080918080806061808080808080808080808080808080808080808070414141416180438080808080808080808060414141415241414140474040474041618080808080808080808080808080808080808080805380808080808080808080808080808080808182808092808080806041424141414141
-5380808044804480448080438080906061808080808080808080804380808080909090808060414141416180539180808080449122915460414141414141524146464646464641414040404040404042427180808080808080808070424140404040404040404271808080808080808080807071808092806041416241414141
+5380808044804480448080438080906061808080808080808080804380808080909090808060414141416180539180808080449180915460414141414141524146464646464641414040404040404042427180808080808080808070424140404040404040404271808080808080808080807071808092806041416241414141
 404040404040404040404041404040414140404040718080704040614f4f704040404040404141414141414040404040404040404040404141414141414141414646464646464141624141624162414141614f4f4f4f4f4f4f4f4f604141414141414141414141614f4f4f4f4f4f4f4f4f4f60614f4f504f6041414141414141
 4141414141414141414141414141414141414141414140404141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141624141414146414140424042404042424241414141414141414141414141424242424242424242424141424241424162414141414141
 4141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414141414146414641414141414146414141414141414141414141414141414141414141414141414141414141414141414141

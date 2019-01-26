@@ -11,17 +11,42 @@ function require_level()
                 right = 128,
                 top = 0,
                 bottom = 16
+            },
+            entities = {
+                {
+                    type = "round_shell",
+                    x = 52,
+                    y = 12,
+                }
             }
         }
     }
 
+    local function create_entity(params)
+        return new_entity(params.x, params.y, params.type)
+    end
+
     local function new_level(idx)
         local _level = levels[idx]
+        local _entities = {}
 
         return {
             init = function(player)
                 player.change_state(_level.player_start.state)
                 player.set_pos(_level.player_start.x, _level.player_start.y)
+                for params in all(_level.entities) do
+                    add(_entities, create_entity(params))
+                end
+            end,
+            update = function(player)
+                for entity in all(_entities) do
+                    entity.update(player, self)
+                end
+            end,
+            draw = function()
+                for entity in all(_entities) do
+                    entity.draw(entity)
+                end
             end
         }
     end

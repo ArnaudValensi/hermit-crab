@@ -2,6 +2,7 @@ new_player = require_player()
 new_camera = require_camera()
 new_scheduler = require_scheduler()
 new_level = require_level()
+new_entity = require_entity()
 
 -- Globals
 player = new_player()
@@ -22,6 +23,7 @@ end
 function _update()
     player.update()
     cam.update()
+    level.update()
     scheduler:update()
 end
 
@@ -29,6 +31,7 @@ function _draw()
     cls()
     camera(cam.get_offset())
     map(0, 0, 0, 0, 128, 128)
+    level.draw()
     player.draw()
 
     -- HUD
