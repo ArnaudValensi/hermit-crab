@@ -28,8 +28,8 @@ function require_player()
         },
         ["round_shell_in_shell"] = {
             frames = {4, 5, 6, 7},
-            acc_x = 0.3,
-            dcc_x = 0.05,
+            acc_x = 0.1,
+            dcc_x = 0.01,
             max_dx = 10,
         },
     }
