@@ -29,5 +29,5 @@ function _draw()
 
   -- HUD
   camera(0, 0)
-  print(cam.get_offset(), 0, 0, 7)
+  -- print(cam.get_offset(), 0, 0, 7)
 end
