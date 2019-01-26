@@ -64,6 +64,7 @@ function require_level()
                 end
 
                 if (not player.is_alive()) then
+                    sfx(14)
                     change_state(end_level_state, { has_won = false })
                 end
             end,
