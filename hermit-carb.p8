@@ -36,8 +36,6 @@ function require_camera()
 
                 local player_center_pos = target.get_center_pos()
 
-                print(player_center_pos.x..', '..player_center_pos.y, 0, 8, 7)
-
                 pos.x = lerp(pos.x, player_center_pos.x, smooth_speed)
                 pos.y = lerp(pos.y, player_center_pos.y, smooth_speed)
 
@@ -280,32 +278,105 @@ new_scheduler = require_scheduler()
 player = new_player()
 scheduler = new_scheduler()
 
-function _init()
-  player.change_state("round_shell")
-  goal = {
-    get_center_pos = function()
-      return new_vec(75 * 8, 10 * 8)
+function draw_text(str,x,y,al,extra,c1,c2)
+  str = ""..str
+  local al = al or 1
+  local c1 = c1 or 7
+  local c2 = c2 or 13
+
+  if al == 1 then x -= #str * 2 - 1
+  elseif al == 2 then x -= #str * 4 end
+
+  y -= 3
+
+  if extra then
+   print(str,x,y+3,0)
+   print(str,x-1,y+2,0)
+   print(str,x+1,y+2,0)
+   print(str,x-2,y+1,0)
+   print(str,x+2,y+1,0)
+   print(str,x-2,y,0)
+   print(str,x+2,y,0)
+   print(str,x-1,y-1,0)
+   print(str,x+1,y-1,0)
+   print(str,x,y-2,0)
+  end
+
+  print(str,x+1,y+1,c2)
+  print(str,x-1,y+1,c2)
+  print(str,x,y+2,c2)
+  print(str,x+1,y,c1)
+  print(str,x-1,y,c1)
+  print(str,x,y+1,c1)
+  print(str,x,y-1,c1)
+  print(str,x,y,0)
+end
+
+function change_state(to_state)
+  cls()
+  state = to_state
+  to_state.on_start()
+  to_state.update()
+end
+
+start_state = {
+  on_start = function()
+
+  end,
+
+  update = function()
+    if (btn(4) or btn(5)) then
+      change_state(play_state)
     end
-  }
-  cam = new_camera(goal)
-  scheduler:set_timeout(2, function() cam.set_target(player) end)
+  end,
+
+  draw = function()
+    cls()
+    draw_text("press 🅾️ / z to start ", 64, 120)
+  end
+}
+
+play_state = {
+  on_start = function()
+    player.change_state("round_shell")
+    goal = {
+      get_center_pos = function()
+        return new_vec(75 * 8, 10 * 8)
+      end
+    }
+    cam = new_camera(goal)
+    scheduler:set_timeout(2, function() cam.set_target(player) end)
+    print('1', 0, 0, 7)
+  end,
+
+  update = function()
+    print('2', 0, 8, 7)
+    player.update()
+    cam.update()
+    scheduler:update()
+  end,
+
+  draw = function()
+    print('3', 0, 16, 7)
+    cls()
+    camera(cam.get_offset())
+    map(0, 0, 0, 0, 128, 128)
+    player.draw()
+  end
+}
+
+state = start_state
+
+function _init()
+  state.on_start()
 end
 
 function _update()
-  player.update()
-  cam.update()
-  scheduler:update()
+  state.update()
 end
 
 function _draw()
-  cls()
-  camera(cam.get_offset())
-  map(0, 0, 0, 0, 128, 128)
-  player.draw()
-
-  -- HUD
-  camera(0, 0)
-  -- print(cam.get_offset(), 0, 0, 7)
+  state.draw()
 end
 
 __gfx__

@@ -33,8 +33,6 @@ function require_camera()
 
                 local player_center_pos = target.get_center_pos()
 
-                print(player_center_pos.x..', '..player_center_pos.y, 0, 8, 7)
-
                 pos.x = lerp(pos.x, player_center_pos.x, smooth_speed)
                 pos.y = lerp(pos.y, player_center_pos.y, smooth_speed)
 
