@@ -39,12 +39,28 @@ function require_entity()
         ["ceil_laser_beam"] = {
             frames = {77, 78},
             update = function(self, player, level)
+                self.cells = vertical_ray_cast(self.pos_x, self.pos_y, 1, level)
                 local ppos = player.get_center_pos()
-                if (is_point_in_box(ppos.x, ppos.y, self.pos_x * 8, (self.pos_y - 1) * 8, 8, 8)) then
-                    player.push(0.2, 0)
+                if player.is_visible() then
+                    for cel in all(self.cells) do
+                        if (is_point_in_box(ppos.x, ppos.y, cel.x * 8, cel.y * 8, 8, 8)) then
+                            player.die()
+                        end
+                    end
                 end
             end,
-            draw = basic_draw,
+            draw = function(self)
+                local beam_frames = {93, 94}
+                self.animtick -= 1
+                if self.animtick <= 0 then
+                    self.sprite_idx = (self.sprite_idx) % #(self.frames) + 1
+                    self.animtick = 5
+                end
+                spr(self.frames[self.sprite_idx], self.pos_x * 8, self.pos_y * 8)
+                for cel in all(self.cells) do
+                    spr(beam_frames[self.sprite_idx], cel.x * 8, cel.y * 8)
+                end
+            end,
         },
         ["round_shell"] = {
             frames = {33, 34},

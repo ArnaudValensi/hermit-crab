@@ -44,11 +44,6 @@ function require_level()
             },
             entities = {
                 {
-                    type = "box_shell",
-                    x = 10,
-                    y = 12,
-                },
-                {
                     many = true,
                     type = "conveyor_belt",
                     pos = {
@@ -64,8 +59,17 @@ function require_level()
                     type = "ceil_laser_beam",
                     pos = {
                         {x = 25, y = 9,},
-                        {x = 28, y = 9,},
+                        {x = 26, y = 5,},
+                        {x = 27, y = 5,},
                     }
+                },
+                {
+                    many = true,
+                    type = "box_shell",
+                    pos = {
+                        {x = 10, y = 12,},
+                        {x = 26, y = 7,},
+                    },
                 },
             }
         }

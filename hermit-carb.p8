@@ -167,12 +167,28 @@ function require_entity()
         ["ceil_laser_beam"] = {
             frames = {77, 78},
             update = function(self, player, level)
+                self.cells = vertical_ray_cast(self.pos_x, self.pos_y, 1, level)
                 local ppos = player.get_center_pos()
-                if (is_point_in_box(ppos.x, ppos.y, self.pos_x * 8, (self.pos_y - 1) * 8, 8, 8)) then
-                    player.push(0.2, 0)
+                if player.is_visible() then
+                    for cel in all(self.cells) do
+                        if (is_point_in_box(ppos.x, ppos.y, cel.x * 8, cel.y * 8, 8, 8)) then
+                            player.die()
+                        end
+                    end
                 end
             end,
-            draw = basic_draw,
+            draw = function(self)
+                local beam_frames = {93, 94}
+                self.animtick -= 1
+                if self.animtick <= 0 then
+                    self.sprite_idx = (self.sprite_idx) % #(self.frames) + 1
+                    self.animtick = 5
+                end
+                spr(self.frames[self.sprite_idx], self.pos_x * 8, self.pos_y * 8)
+                for cel in all(self.cells) do
+                    spr(beam_frames[self.sprite_idx], cel.x * 8, cel.y * 8)
+                end
+            end,
         },
         ["round_shell"] = {
             frames = {33, 34},
@@ -274,11 +290,6 @@ function require_level()
             },
             entities = {
                 {
-                    type = "box_shell",
-                    x = 10,
-                    y = 12,
-                },
-                {
                     many = true,
                     type = "conveyor_belt",
                     pos = {
@@ -294,8 +305,17 @@ function require_level()
                     type = "ceil_laser_beam",
                     pos = {
                         {x = 25, y = 9,},
-                        {x = 28, y = 9,},
+                        {x = 26, y = 5,},
+                        {x = 27, y = 5,},
                     }
+                },
+                {
+                    many = true,
+                    type = "box_shell",
+                    pos = {
+                        {x = 10, y = 12,},
+                        {x = 26, y = 7,},
+                    },
                 },
             }
         }
@@ -375,6 +395,16 @@ function is_point_in_box(px,py,x,y,w,h)
 	else
 		return false
 	end
+end
+
+function vertical_ray_cast(celx, cely, dir, level)
+	empty_cells = {}
+	cely += dir
+	while not fget(level.sprite_at(celx, cely), 7) and cely > 0 and cely <= 128 do
+		add(empty_cells, new_vec(celx, cely))
+		cely += dir
+	end
+	return empty_cells
 end
 function require_play_state()
     local player = new_player()
@@ -492,6 +522,7 @@ function require_player()
             acc_x = 0,
             dcc_x = 1,
             max_dx = 2,
+            invisible = true,
             action_push = nil,
             action_release = "box_shell",
         },
@@ -633,6 +664,12 @@ function require_player()
         return {
             is_alive = function()
                 return alive
+            end,
+            is_visible = function()
+                return not shell_state.invisible
+            end,
+            die = function()
+                _die()
             end,
             set_pos = function(x, y)
                 pos_x = x

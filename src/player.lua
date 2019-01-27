@@ -48,6 +48,7 @@ function require_player()
             acc_x = 0,
             dcc_x = 1,
             max_dx = 2,
+            invisible = true,
             action_push = nil,
             action_release = "box_shell",
         },
@@ -189,6 +190,12 @@ function require_player()
         return {
             is_alive = function()
                 return alive
+            end,
+            is_visible = function()
+                return not shell_state.invisible
+            end,
+            die = function()
+                _die()
             end,
             set_pos = function(x, y)
                 pos_x = x
