@@ -1,5 +1,5 @@
 function require_play_state()
-    local curr_level = 2
+    local curr_level = 1
     local nb_level = 2
     local player = new_player()
     local scheduler = new_scheduler()
@@ -18,7 +18,7 @@ function require_play_state()
                 scheduler:set_timeout(2, function()
                     change_state(end_level_state, { has_won = false, next_level = curr_level })
                 end)
-                
+
             end
             state_transitionning = true
         end
