@@ -89,7 +89,10 @@ function require_start_state()
 
         update = function()
             if (btn(4) or btn(5)) then
-                change_state(play_state)
+                sfx(16)
+                scheduler:set_timeout(1, function()
+                    change_state(play_state)
+                end)
             end
 
             easing.update()
