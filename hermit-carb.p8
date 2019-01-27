@@ -450,6 +450,7 @@ function require_player()
         }
         local jump_pressed_before = false
         local action_pressed_before = false
+        local display_shell_button = false
 
         local _change_state = function(new_state)
             alive = true
@@ -572,6 +573,10 @@ function require_player()
                 velocity.y = 0
             end,
             change_state = function(new_state)
+                if (new_state == "round_shell") then
+                    display_shell_button = true
+                end
+
                 _change_state(new_state)
             end,
             update = function(level)
@@ -579,6 +584,10 @@ function require_player()
                     move_x(level)
                     handle_jump_and_gravity(level)
                     handle_action()
+                end
+
+                if display_shell_button and btn(5) then
+                    display_shell_button = false
                 end
             end,
             draw = function()
@@ -591,6 +600,11 @@ function require_player()
                     spr(frames[sprite_idx], pos_x, pos_y, 1, 1, flipx)
                 else
                     spr(15, pos_x, pos_y, 1, 1, flipx)
+                end
+
+                if display_shell_button then
+                    camera(0, 0)
+                    draw_text("x to use your shell", 64, 64)
                 end
             end,
             get_center_pos = function()
