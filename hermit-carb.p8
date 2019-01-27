@@ -13,7 +13,7 @@ function require_camera()
     end
 
     local function new_camera(new_target)
-        local pos = new_vec(0, 0) -- this is the center of the camera.
+        local pos = new_vec(0, 0) -- This is the center of the camera.
         local offset = new_vec(0, 0)
         local shake_offset = new_vec(0, 0)
         local shake_countdown = 0
@@ -91,10 +91,12 @@ function draw_text(str,x,y,al,extra,c1,c2)
 end
 function require_end_level_state()
     local display_win = false
+    local next_level = false
 
     local end_level_state = {
         on_start = function(option)
             display_win = option and option.has_won or false
+            next_level = option and option.next_level or false
         end,
 
         on_stop = function()
@@ -103,7 +105,11 @@ function require_end_level_state()
 
         update = function()
             if (btn(4) or btn(5)) then
-                change_state(play_state)
+                if next_level then
+                    change_state(play_state, {next_level = next_level})
+                else
+                    change_state(play_state)
+                end
             end
         end,
 
@@ -113,8 +119,8 @@ function require_end_level_state()
 
             if (display_win) then
                 draw_text("you found a home !", 64, 32)
-                draw_text("however...", 64, 48)
-                draw_text("your princess is", 64, 64)
+                draw_text("However...", 64, 48)
+                draw_text("Your princess is", 64, 64)
                 draw_text("in another shell", 64, 80)
                 draw_text("press 🅾️ / z to continue", 64, 120)
             else
@@ -273,8 +279,8 @@ function require_level()
         },
         {
             player_start = {
-                x = 2 * 8,
-                y = 5 * 8,
+                x = 3 * 8,
+                y = 10 * 8,
                 state = "naked"
             },
             goal = {
@@ -286,7 +292,7 @@ function require_level()
                 left = 0,
                 right = 128,
                 top = 16,
-                bottom = 32
+                bottom = 16
             },
             entities = {
                 {
@@ -411,9 +417,11 @@ function vertical_ray_cast(celx, cely, dir, level)
 	return empty_cells
 end
 function require_play_state()
+    local curr_level = 1
+    local nb_level = 2
     local player = new_player()
     local scheduler = new_scheduler()
-    local level = new_level(2)
+    local level = new_level(1)
     local state_transitionning = false
 
     function start_end_transition()
@@ -421,12 +429,12 @@ function require_play_state()
             if (level.has_won()) then
                 sfx(3)
                 scheduler:set_timeout(2, function()
-                    change_state(end_level_state, { has_won = true })
+                    change_state(end_level_state, { has_won = true, next_level = curr_level % 2 + 1 })
                 end)
             else
                 sfx(14)
                 scheduler:set_timeout(2, function()
-                    change_state(end_level_state, { has_won = false })
+                    change_state(end_level_state, { has_won = false, next_level = curr_level })
                 end)
             end
             state_transitionning = true
@@ -434,7 +442,11 @@ function require_play_state()
     end
 
     local play_state = {
-        on_start = function()
+        on_start = function(option)
+            if option and option.next_level and curr_level != option.next_level then
+                curr_level = option.next_level
+                level = new_level(curr_level)
+            end
             state_transitionning = false
             level.init(player)
             goal = {
@@ -614,14 +626,14 @@ function require_player()
             if (is_grounded) then
                 velocity.y = 0
 
-                if (jump_pressed) then -- jump (z)
+                if (jump_pressed) then -- Jump (z)
                     velocity.y = -jump_force
                     sfx(0)
                 end
             else
                 if (velocity.y < 0 and jump_pressed_before and jump_pressed == false) then
                     velocity.y = 0
-                elseif (velocity.y > 0) then -- falling
+                elseif (velocity.y > 0) then -- Falling
                     velocity.y = velocity.y + gravity * fall_coef
                 else
                     velocity.y = velocity.y + gravity
@@ -643,7 +655,7 @@ function require_player()
 
             is_grounded = collide_left or collide_right
 
-            if (is_grounded) then -- fix y position
+            if (is_grounded) then -- Fix y position
                 pos_y = pos_y - pos_y % 8
             end
         end

@@ -1,9 +1,11 @@
 function require_end_level_state()
     local display_win = false
+    local next_level = false
 
     local end_level_state = {
         on_start = function(option)
             display_win = option and option.has_won or false
+            next_level = option and option.next_level or false
         end,
 
         on_stop = function()
@@ -12,7 +14,11 @@ function require_end_level_state()
 
         update = function()
             if (btn(4) or btn(5)) then
-                change_state(play_state)
+                if next_level then
+                    change_state(play_state, {next_level = next_level})
+                else
+                    change_state(play_state)
+                end
             end
         end,
 

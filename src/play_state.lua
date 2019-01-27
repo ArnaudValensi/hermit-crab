@@ -1,7 +1,9 @@
 function require_play_state()
+    local curr_level = 1
+    local nb_level = 2
     local player = new_player()
     local scheduler = new_scheduler()
-    local level = new_level(2)
+    local level = new_level(1)
     local state_transitionning = false
 
     function start_end_transition()
@@ -9,12 +11,12 @@ function require_play_state()
             if (level.has_won()) then
                 sfx(3)
                 scheduler:set_timeout(2, function()
-                    change_state(end_level_state, { has_won = true })
+                    change_state(end_level_state, { has_won = true, next_level = curr_level % 2 + 1 })
                 end)
             else
                 sfx(14)
                 scheduler:set_timeout(2, function()
-                    change_state(end_level_state, { has_won = false })
+                    change_state(end_level_state, { has_won = false, next_level = curr_level })
                 end)
             end
             state_transitionning = true
@@ -22,7 +24,11 @@ function require_play_state()
     end
 
     local play_state = {
-        on_start = function()
+        on_start = function(option)
+            if option and option.next_level and curr_level != option.next_level then
+                curr_level = option.next_level
+                level = new_level(curr_level)
+            end
             state_transitionning = false
             level.init(player)
             goal = {
