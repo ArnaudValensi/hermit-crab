@@ -2,7 +2,7 @@ function require_level()
     local levels = {
         {
             player_start = {
-                x = 123 * 8,
+                x = 2 * 8,
                 y = 10 * 8,
                 state = "naked"
             },
