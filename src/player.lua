@@ -210,7 +210,7 @@ function require_player()
 
                 if display_shell_button then
                     camera(0, 0)
-                    draw_text("x to use your shell", 64, 64)
+                    draw_text("hold x to use your shell", 64, 64)
                 end
             end,
             get_center_pos = function()
