@@ -417,11 +417,11 @@ function vertical_ray_cast(celx, cely, dir, level)
 	return empty_cells
 end
 function require_play_state()
-    local curr_level = 1
+    local curr_level = 2
     local nb_level = 2
     local player = new_player()
     local scheduler = new_scheduler()
-    local level = new_level(1)
+    local level = new_level(curr_level)
     local state_transitionning = false
 
     function start_end_transition()
@@ -699,7 +699,7 @@ function require_player()
                 pushed = true
             end,
             change_state = function(new_state)
-                if (new_state == "round_shell") then
+                if new_state == "round_shell" or new_state == "box_shell" then
                     display_shell_button = true
                 end
 

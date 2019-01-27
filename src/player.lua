@@ -209,7 +209,7 @@ function require_player()
                 pushed = true
             end,
             change_state = function(new_state)
-                if (new_state == "round_shell") then
+                if new_state == "round_shell" or new_state == "box_shell" then
                     display_shell_button = true
                 end
 

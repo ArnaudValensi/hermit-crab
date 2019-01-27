@@ -1,9 +1,9 @@
 function require_play_state()
-    local curr_level = 1
+    local curr_level = 2
     local nb_level = 2
     local player = new_player()
     local scheduler = new_scheduler()
-    local level = new_level(1)
+    local level = new_level(curr_level)
     local state_transitionning = false
 
     function start_end_transition()
