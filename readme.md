@@ -1,4 +1,4 @@
-# Hermi Crab
+# Hermit Crab
 
 ## Dev Environment
 
