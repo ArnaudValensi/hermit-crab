@@ -64,6 +64,7 @@ function require_entity()
             update = function(self, player, level)
                 local ppos = player.get_center_pos()
                 if (is_point_in_box(ppos.x, ppos.y, self.pos_x * 8, self.pos_y * 8, 8, 8)) then
+                    sfx(15)
                     player.change_state("round_shell")
                     self.deleted = true
                 end
@@ -75,6 +76,7 @@ function require_entity()
             update = function(self, player, level)
                 local ppos = player.get_center_pos()
                 if (is_point_in_box(ppos.x, ppos.y, self.pos_x * 8, self.pos_y * 8, 8, 8)) then
+                    sfx(15)
                     player.change_state("box_shell")
                     self.deleted = true
                 end
