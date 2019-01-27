@@ -36,6 +36,16 @@ function require_entity()
             end,
             draw = basic_draw,
         },
+        ["ceil_laser_beam"] = {
+            frames = {77, 78},
+            update = function(self, player, level)
+                local ppos = player.get_center_pos()
+                if (is_point_in_box(ppos.x, ppos.y, self.pos_x * 8, (self.pos_y - 1) * 8, 8, 8)) then
+                    player.push(0.2, 0)
+                end
+            end,
+            draw = basic_draw,
+        },
         ["round_shell"] = {
             frames = {33, 34},
             update = function(self, player, level)

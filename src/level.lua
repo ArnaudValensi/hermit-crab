@@ -49,29 +49,23 @@ function require_level()
                     y = 12,
                 },
                 {
+                    many = true,
                     type = "conveyor_belt",
-                    x = 13,
-                    y = 13,
+                    pos = {
+                        {x = 13, y = 13,},
+                        {x = 14, y = 13,},
+                        {x = 15, y = 13,},
+                        {x = 16, y = 13,},
+                        {x = 17, y = 13,},
+                    }
                 },
                 {
-                    type = "conveyor_belt",
-                    x = 14,
-                    y = 13,
-                },
-                {
-                    type = "conveyor_belt",
-                    x = 15,
-                    y = 13,
-                },
-                {
-                    type = "conveyor_belt",
-                    x = 16,
-                    y = 13,
-                },
-                {
-                    type = "conveyor_belt",
-                    x = 17,
-                    y = 13,
+                    many = true,
+                    type = "ceil_laser_beam",
+                    pos = {
+                        {x = 25, y = 9,},
+                        {x = 28, y = 9,},
+                    }
                 },
             }
         }
@@ -107,7 +101,13 @@ function require_level()
                 player.set_pos(_level.player_start.x, _level.player_start.y)
                 add(_entities, create_entity(_level.goal))
                 for params in all(_level.entities) do
-                    add(_entities, create_entity(params))
+                    if not params.many then
+                        add(_entities, create_entity(params))
+                    else
+                        for pos in all(params.pos) do
+                            add(_entities, create_entity({type = params.type, x = pos.x, y = pos.y}))
+                        end
+                    end
                 end
             end,
             update = function(self)
