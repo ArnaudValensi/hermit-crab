@@ -30,7 +30,7 @@ function new_title_picture()
             palt(0, false)
             decor_sprite:draw_at(0, 78 + y)
             palt(0, true)
-            title_sprite:draw_at(0, 90 + y)
+            title_sprite:draw_at(3, 90 + y)
         end
     }
 
