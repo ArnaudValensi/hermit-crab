@@ -1,4 +1,4 @@
-# Super Solid Hermit Crabventure Prime
+# Hermi Crab
 
 ## Dev Environment
 
