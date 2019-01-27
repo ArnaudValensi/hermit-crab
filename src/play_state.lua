@@ -18,6 +18,7 @@ function require_play_state()
                 scheduler:set_timeout(2, function()
                     change_state(end_level_state, { has_won = false, next_level = curr_level })
                 end)
+                
             end
             state_transitionning = true
         end
