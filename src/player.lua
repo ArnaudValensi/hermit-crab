@@ -71,9 +71,9 @@ function require_player()
             alive = false
         end
 
-        local collide_side = function()
+        local collide_side = function(level)
             if velocity.x < 0 then
-                collided_spr = mget(pos_x / 8, pos_y / 8)
+                collided_spr = level.sprite_at(pos_x / 8, pos_y / 8)
                 if fget(collided_spr, 6) then
                     _die()
                 elseif fget(collided_spr, 7) then
@@ -82,7 +82,7 @@ function require_player()
                     return true
                 end
             else
-                collided_spr = mget(pos_x / 8 + 1, pos_y / 8)
+                collided_spr = level.sprite_at(pos_x / 8 + 1, pos_y / 8)
                 if fget(collided_spr, 6) then
                     _die()
                 elseif fget(collided_spr, 7) then
@@ -94,7 +94,7 @@ function require_player()
             end
         end
 
-        local move_x = function()
+        local move_x = function(level)
             if (btn(0)) then
                 velocity.x -= acc_x
                 flipx = true
@@ -107,10 +107,10 @@ function require_player()
 
 			velocity.x=mid(-max_dx,velocity.x,max_dx)
 			pos_x+=velocity.x
-			collide_side()
+			collide_side(level)
         end
 
-        local handle_jump_and_gravity = function()
+        local handle_jump_and_gravity = function(level)
             local jump_pressed = btn(4)
 
             if (is_grounded) then
@@ -138,8 +138,8 @@ function require_player()
 
             pos_y = pos_y + velocity.y
 
-            local left_feet_spr = mget(pos_x / 8, (pos_y + 8) / 8);
-            local right_feet_spr = mget((pos_x + 7) / 8, (pos_y + 8) / 8);
+            local left_feet_spr = level.sprite_at(pos_x / 8, (pos_y + 8) / 8);
+            local right_feet_spr = level.sprite_at((pos_x + 7) / 8, (pos_y + 8) / 8);
             local collide_left = fget(left_feet_spr, 7)
             local collide_right = fget(right_feet_spr, 7)
 
@@ -180,10 +180,10 @@ function require_player()
             change_state = function(new_state)
                 _change_state(new_state)
             end,
-            update = function()
+            update = function(level)
                 if alive then
-                    move_x()
-                    handle_jump_and_gravity()
+                    move_x(level)
+                    handle_jump_and_gravity(level)
                     handle_action()
                 end
             end,

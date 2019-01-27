@@ -24,6 +24,31 @@ function require_level()
                     y = 12,
                 },
             }
+        },
+        {
+            player_start = {
+                x = 2 * 8,
+                y = 5 * 8,
+                state = "naked"
+            },
+            goal = {
+                type = "goal",
+                x = 124,
+                y = 5,
+            },
+            viewport = {
+                left = 0,
+                right = 128,
+                top = 16,
+                bottom = 32
+            },
+            entities = {
+                {
+                    type = "box_shell",
+                    x = 10,
+                    y = 6,
+                },
+            }
         }
     }
 
@@ -44,6 +69,9 @@ function require_level()
             end,
             get_viewport = function()
                 return _level.viewport
+            end,
+            sprite_at = function(x, y)
+                return mget(x + _level.viewport.left, y + _level.viewport.top)
             end,
             init = function(player)
                 _entities = {}

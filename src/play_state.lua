@@ -45,7 +45,7 @@ function require_play_state()
             if (level.is_ended()) then
                 start_end_transition()
             else
-                player.update()
+                player.update(level)
                 cam.update()
             end
 
