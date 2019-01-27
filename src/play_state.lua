@@ -11,7 +11,11 @@ function require_play_state()
             if (level.has_won()) then
                 sfx(3)
                 scheduler:set_timeout(2, function()
-                    change_state(end_level_state, { has_won = true, next_level = curr_level % 2 + 1 })
+                    if curr_level == nb_level then
+                        change_state(start_state)
+                    else
+                        change_state(end_level_state, { has_won = true, next_level = curr_level % 2 + 1 })
+                    end
                 end)
             else
                 sfx(14)

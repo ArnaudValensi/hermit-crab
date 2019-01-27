@@ -93,7 +93,7 @@ function require_start_state()
             if (btn(4) or btn(5)) then
                 sfx(16)
                 scheduler:set_timeout(1, function()
-                    change_state(play_state)
+                    change_state(play_state, {next_level = 1})
                 end)
             end
 
