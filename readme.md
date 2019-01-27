@@ -1,5 +1,7 @@
 # Hermit Crab
 
+The story of a hermit crab travelling the world to find his home shell with his princess.
+
 ## Dev Environment
 
 The first time:
