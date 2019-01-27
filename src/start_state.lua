@@ -28,7 +28,7 @@ function require_start_state()
 
     local start_state = {
         on_start = function()
-            printh('[1]', 'log');
+            printh('[2]', 'log');
 
         end,
 

@@ -11,7 +11,7 @@ function require_entity()
 
     local entities = {
         ["goal"] = {
-            frames = {192},
+            frames = {131},
             update = function(self, player, level)
                 local ppos = player.get_center_pos()
                 if (is_point_in_box(ppos.x, ppos.y, self.pos_x * 8, self.pos_y * 8, 24, 16)) then
@@ -20,10 +20,7 @@ function require_entity()
             end,
             draw = function(self)
                 spr(116, self.pos_x * 8, (self.pos_y + 1) * 8)
-                spr(192, (self.pos_x + 1) * 8, self.pos_y * 8)
-                spr(193, (self.pos_x + 2) * 8, self.pos_y * 8)
-                spr(208, (self.pos_x + 1) * 8, (self.pos_y + 1) * 8)
-                spr(209, (self.pos_x + 2) * 8, (self.pos_y + 1) * 8)
+                spr(131, (self.pos_x + 1) * 8, self.pos_y * 8, 2, 2)
             end
         },
         ["conveyor_belt"] = {
