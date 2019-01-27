@@ -34,7 +34,7 @@ function require_level()
             goal = {
                 type = "goal",
                 x = 124,
-                y = 5,
+                y = 11,
             },
             viewport = {
                 left = 0,
@@ -46,7 +46,32 @@ function require_level()
                 {
                     type = "box_shell",
                     x = 10,
-                    y = 6,
+                    y = 12,
+                },
+                {
+                    type = "conveyor_belt",
+                    x = 13,
+                    y = 13,
+                },
+                {
+                    type = "conveyor_belt",
+                    x = 14,
+                    y = 13,
+                },
+                {
+                    type = "conveyor_belt",
+                    x = 15,
+                    y = 13,
+                },
+                {
+                    type = "conveyor_belt",
+                    x = 16,
+                    y = 13,
+                },
+                {
+                    type = "conveyor_belt",
+                    x = 17,
+                    y = 13,
                 },
             }
         }

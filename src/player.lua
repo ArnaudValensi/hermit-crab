@@ -35,6 +35,22 @@ function require_player()
             action_push = nil,
             action_release = "round_shell",
         },
+        ["box_shell"] = {
+            frames = {16, 17},
+            acc_x = 0.5,
+            dcc_x = 0,
+            max_dx = 2,
+            action_push = "box_shell_in_shell",
+            action_release = nil,
+        },
+        ["box_shell_in_shell"] = {
+            frames = {18},
+            acc_x = 0,
+            dcc_x = 1,
+            max_dx = 2,
+            action_push = nil,
+            action_release = "box_shell",
+        },
     }
 
     function new_player()
@@ -49,6 +65,7 @@ function require_player()
         local shell_state = shell_states["naked"]
         local sprite_idx = 1
         local flipx = false
+        local pushed = false
         local is_grounded = false
         local velocity = {
             x = 0,
@@ -102,13 +119,14 @@ function require_player()
             elseif (btn(1)) then
                 velocity.x += acc_x
                 flipx = false
-            else
+            elseif not pushed then
                 velocity.x *= dcc_x
             end
 
-			velocity.x=mid(-max_dx,velocity.x,max_dx)
+            velocity.x=mid(-max_dx,velocity.x,max_dx)
 			pos_x+=velocity.x
-			collide_side(level)
+            collide_side(level)
+            pushed = false
         end
 
         local handle_jump_and_gravity = function(level)
@@ -177,6 +195,11 @@ function require_player()
                 pos_y = y
                 velocity.x = 0
                 velocity.y = 0
+            end,
+            push = function(x, y)
+                velocity.x += x
+                velocity.y += y
+                pushed = true
             end,
             change_state = function(new_state)
                 if (new_state == "round_shell") then

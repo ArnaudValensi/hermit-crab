@@ -26,6 +26,16 @@ function require_entity()
                 spr(209, (self.pos_x + 2) * 8, (self.pos_y + 1) * 8)
             end
         },
+        ["conveyor_belt"] = {
+            frames = {118, 119, 120},
+            update = function(self, player, level)
+                local ppos = player.get_center_pos()
+                if (is_point_in_box(ppos.x, ppos.y, self.pos_x * 8, (self.pos_y - 1) * 8, 8, 8)) then
+                    player.push(0.2, 0)
+                end
+            end,
+            draw = basic_draw,
+        },
         ["round_shell"] = {
             frames = {33, 34},
             update = function(self, player, level)
@@ -40,6 +50,11 @@ function require_entity()
         ["box_shell"] = {
             frames = {49, 50},
             update = function(self, player, level)
+                local ppos = player.get_center_pos()
+                if (is_point_in_box(ppos.x, ppos.y, self.pos_x * 8, self.pos_y * 8, 8, 8)) then
+                    player.change_state("box_shell")
+                    self.deleted = true
+                end
             end,
             draw = basic_draw,
         },
