@@ -1,6 +1,7 @@
 function require_end_level_state()
     local display_win = false
     local next_level = false
+    local scheduler = new_scheduler()
 
     local end_level_state = {
         on_start = function(option)
@@ -13,12 +14,18 @@ function require_end_level_state()
         end,
 
         update = function()
+            scheduler:update()
+
             if (btn(4) or btn(5)) then
-                if next_level then
-                    change_state(play_state, {next_level = next_level})
-                else
-                    change_state(play_state)
-                end
+                sfx(16)
+
+                scheduler:set_timeout(1, function()
+                    if next_level then
+                        change_state(play_state, {next_level = next_level})
+                    else
+                        change_state(play_state)
+                    end
+                end)
             end
         end,
 

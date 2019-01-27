@@ -8,6 +8,8 @@ function require_play_state()
 
     function start_end_transition()
         if (not state_transitionning) then
+            music(-1)
+
             if (level.has_won()) then
                 sfx(3)
                 scheduler:set_timeout(2, function()
@@ -47,7 +49,7 @@ function require_play_state()
         end,
 
         on_stop = function()
-            music(-1)
+
         end,
 
         update = function()

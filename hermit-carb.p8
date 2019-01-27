@@ -92,6 +92,7 @@ end
 function require_end_level_state()
     local display_win = false
     local next_level = false
+    local scheduler = new_scheduler()
 
     local end_level_state = {
         on_start = function(option)
@@ -104,12 +105,18 @@ function require_end_level_state()
         end,
 
         update = function()
+            scheduler:update()
+
             if (btn(4) or btn(5)) then
-                if next_level then
-                    change_state(play_state, {next_level = next_level})
-                else
-                    change_state(play_state)
-                end
+                sfx(16)
+
+                scheduler:set_timeout(1, function()
+                    if next_level then
+                        change_state(play_state, {next_level = next_level})
+                    else
+                        change_state(play_state)
+                    end
+                end)
             end
         end,
 
@@ -253,7 +260,7 @@ function require_level()
     local levels = {
         {
             player_start = {
-                x = 2 * 8,
+                x = 123 * 8,
                 y = 10 * 8,
                 state = "naked"
             },
@@ -464,6 +471,8 @@ function require_play_state()
 
     function start_end_transition()
         if (not state_transitionning) then
+            music(-1)
+
             if (level.has_won()) then
                 sfx(3)
                 scheduler:set_timeout(2, function()
@@ -503,7 +512,7 @@ function require_play_state()
         end,
 
         on_stop = function()
-            music(-1)
+
         end,
 
         update = function()
