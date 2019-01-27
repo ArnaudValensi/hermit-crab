@@ -52,6 +52,12 @@ function require_level()
                         {x = 15, y = 13,},
                         {x = 16, y = 13,},
                         {x = 17, y = 13,},
+
+                        {x = 23, y = 13,},
+                        {x = 24, y = 13,},
+                        {x = 25, y = 13,},
+                        {x = 26, y = 13,},
+                        {x = 27, y = 13,},
                     }
                 },
                 {
@@ -59,8 +65,6 @@ function require_level()
                     type = "ceil_laser_beam",
                     pos = {
                         {x = 25, y = 9,},
-                        {x = 26, y = 5,},
-                        {x = 27, y = 5,},
                     }
                 },
                 {
@@ -68,7 +72,7 @@ function require_level()
                     type = "box_shell",
                     pos = {
                         {x = 10, y = 12,},
-                        {x = 26, y = 7,},
+                        {x = 25, y = 7,},
                     },
                 },
             }
