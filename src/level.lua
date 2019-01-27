@@ -27,8 +27,8 @@ function require_level()
         },
         {
             player_start = {
-                x = 2 * 8,
-                y = 5 * 8,
+                x = 3 * 8,
+                y = 10 * 8,
                 state = "naked"
             },
             goal = {
@@ -40,7 +40,7 @@ function require_level()
                 left = 0,
                 right = 128,
                 top = 16,
-                bottom = 32
+                bottom = 16
             },
             entities = {
                 {
