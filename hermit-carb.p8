@@ -892,6 +892,8 @@ function require_start_state()
 
     local start_state = {
         on_start = function()
+            easing = new_tween(0, -50, 30)
+            display_press_start = false
             scheduler:set_timeout(1, function()
                 display_press_start = true
             end)
